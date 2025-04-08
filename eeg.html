@@ -1,0 +1,131 @@
+<html>
+<head>
+    <style>
+        .myButton{
+            background:url(biovibe.png) no-repeat;
+            cursor:pointer;
+            border:none;
+            width:100px;
+            height:100px;
+        }
+        body {
+            background-color: lavender;
+        }
+        .header {
+            padding: 7px;
+            text-align: center;
+            background: purple;
+            color: white;
+            font-size: 70px;
+        }
+        .heart {
+            text-align:center;
+            font-size: 40px;
+        }
+        .lotus{
+            background:url(lotus.png) no-repeat;
+            cursor:pointer;
+            border:none;
+            width:100px;
+            height:100px;
+        }
+        .user{
+            background:url(user.png) no-repeat;
+            cursor:pointer;
+            border:none;
+            width:100px;
+            height:100px;
+        }
+        .home{
+            background:url(home.png) no-repeat;
+            cursor:pointer;
+            border:none;
+            width:100px;
+            height:100px;
+        }
+        .phone{
+            background:url(phone.png) no-repeat;
+            cursor:pointer;
+            border:none;
+            width:100px;
+            height:100px;
+        }
+        .calendar{
+            background:url(calendar.png) no-repeat;
+            cursor:pointer;
+            border:none;
+            width:100px;
+            height:100px;
+        }
+        .dot {
+            height: 50px;
+            width: 50px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: block;
+            top: 5%; 
+            right: 10%; 
+            transform: 
+            translate(50%); 
+            position: absolute;
+            padding:10px;
+        }
+        .status {
+            text-align:center;
+            font-size:50px;
+        }
+        .box {
+            margin:auto; 
+            width: 50%; 
+            display: block;
+            background-color: azure;
+            right: 1%;
+            transform: 
+            translate(50%);
+            position: absolute;
+        }
+    </style>
+
+    <script>
+        async function getBPM() {
+            const resp = await fetch('/heartrate')
+            const heartrate = await resp.text();
+
+            const bpmBox = document.getElementById('bpm');
+            bpmBox.innerText = "BPM: "+heartrate;
+
+            const normalBox = document.getElementById('normal');
+            if (bpm>100 || bpm<60) {
+                normalBox.innerText = "Not Normal";
+                normalBox.style.color= "red";
+            }
+            else {
+                normalBox.innerText= "Normal";
+                normalBox.style.color="white";
+            }
+        }
+    </script>
+</head>
+
+<body onload="setInterval(fetchBPM,1000)">
+    <main>
+    <div class="header"; style="font-family:Verdana">
+        <h1>Biovibe</h1>
+    </div>
+    <div class="heart">
+        <h1>Current Stress Level</h1>
+    </div>
+    <span class="dot"></span>
+    <span class="box"></span>
+    <div id = "bpm"> 
+        BPM  Box
+    </div>
+    <div id="normal">normal/not normal</div>
+    <div {
+        display: flex;
+        justify-content: center;
+    }>
+    <input class="myButton" type="submit" value="">
+</main>
+</body>
+</html>
