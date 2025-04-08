@@ -10,10 +10,13 @@ function respondToRequestFromBrowser(request, response) {
     if (request.url === "/eeg"){
         const html = fs.readFileSync('eeg.html', 'utf-8'); 
         response.end(html);
+    } else if (request.url.endsWith(".png")){
+        const png = fs.readFileSync(request.url.replace("/", ""));
+        response.end(png);
     } else {
         response.end('ERROR');
     }
-
+console.log(request.url)
 }
 
 // This tells the server what to send the browser when the browser sends a request:
