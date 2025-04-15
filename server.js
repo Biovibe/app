@@ -16,6 +16,18 @@ function respondToRequestFromBrowser(request, response) {
     } else if (request.url === "/home"){
         const html = fs.readFileSync('home.html', 'utf-8');
         response.end(html);
+    } else if (request.url === "/user"){
+        const html = fs.readFileSync('home.html', 'utf-8');
+        response.end(html);
+    } else if (request.url === "/phone"){
+        const html = fs.readFileSync('home.html', 'utf-8');
+        response.end(html);
+    } else if (request.url === "/lotus"){
+        const html = fs.readFileSync('home.html', 'utf-8');
+        response.end(html);
+    } else if (request.url === "/calendar"){
+        const html = fs.readFileSync('home.html', 'utf-8');
+        response.end(html);
     } else {
         response.end('ERROR');
     }
