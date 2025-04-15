@@ -13,6 +13,9 @@ function respondToRequestFromBrowser(request, response) {
     } else if (request.url.endsWith(".png")){
         const png = fs.readFileSync(request.url.replace("/", ""));
         response.end(png);
+    } else if (request.url === "/home"){
+        const html = fs.readFileSync('home.html', 'utf-8');
+        response.end(html);
     } else {
         response.end('ERROR');
     }
