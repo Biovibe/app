@@ -1,6 +1,6 @@
-const express = require('express');
-const app = express();
-const path = require('path');
+// const express = require('express');
+// const app = express();
+// const path = require('path');
 const http = require('http');
 
 
@@ -32,30 +32,39 @@ function respondToRequestFromBrowser(request, response) {
     } else if (request.url === "/calendar"){
         const html = fs.readFileSync('calendar.html', 'utf-8');
         response.end(html);
+    } else if (request.url === "/destress"){
+        const html = fs.readFileSync('Destress.html', 'utf-8'); 
+        response.end(html);
+    } else if (request.url === "/journal"){
+            const html = fs.readFileSync('Journal.html', 'utf-8'); 
+            response.end(html);
+    } else if (request.url === "/profile"){
+            const html = fs.readFileSync('Profile.html', 'utf-8'); 
+            response.end(html);
     } else {
         response.end('ERROR');
     }
 console.log(request.url)
 }
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'home.html'));
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'home.html'));
+// });
 
-app.get('/calendar', (req, res) => {
-    res.sendFile(path.join(__dirname, 'calendar.html'));
-});
+// app.get('/calendar', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'calendar.html'));
+// });
 
-app.get('/journal', (req, res) => {
-    res.sendFile(path.join(__dirname, 'journal.html'));
-});
+// app.get('/journal', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'journal.html'));
+// });
 
-app.get('/phone', (req, res) => {
-    res.sendFile(path.join(__dirname, 'phone.html'));
-});
+// app.get('/phone', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'phone.html'));
+// });
 
-app.get('/lotus', (req, res) => {
-    res.sendFile(path.join(__dirname, 'lotus.html'));
-});
+// app.get('/lotus', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'lotus.html'));
+// });
 
-server.listen(3000);
+// server.listen(3000);
