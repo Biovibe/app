@@ -1,4 +1,8 @@
+const express = require('express');
+const app = express();
+const path = require('path');
 const http = require('http');
+
 
 // This line of code creates the web server and puts it into a variable called server:
 const server = http.createServer();
@@ -17,16 +21,16 @@ function respondToRequestFromBrowser(request, response) {
         const html = fs.readFileSync('home.html', 'utf-8');
         response.end(html);
     } else if (request.url === "/user"){
-        const html = fs.readFileSync('home.html', 'utf-8');
+        const html = fs.readFileSync('user.html', 'utf-8');
         response.end(html);
     } else if (request.url === "/phone"){
-        const html = fs.readFileSync('home.html', 'utf-8');
+        const html = fs.readFileSync('phone.html', 'utf-8');
         response.end(html);
     } else if (request.url === "/lotus"){
-        const html = fs.readFileSync('home.html', 'utf-8');
+        const html = fs.readFileSync('lotus.html', 'utf-8');
         response.end(html);
     } else if (request.url === "/calendar"){
-        const html = fs.readFileSync('home.html', 'utf-8');
+        const html = fs.readFileSync('calendar.html', 'utf-8');
         response.end(html);
     } else {
         response.end('ERROR');
@@ -34,8 +38,24 @@ function respondToRequestFromBrowser(request, response) {
 console.log(request.url)
 }
 
-// This tells the server what to send the browser when the browser sends a request:
-server.on('request', respondToRequestFromBrowser)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'home.html'));
+});
 
-// This tells our server to listen to commands coming in from port 3000.  
+app.get('/calendar', (req, res) => {
+    res.sendFile(path.join(__dirname, 'calendar.html'));
+});
+
+app.get('/journal', (req, res) => {
+    res.sendFile(path.join(__dirname, 'journal.html'));
+});
+
+app.get('/phone', (req, res) => {
+    res.sendFile(path.join(__dirname, 'phone.html'));
+});
+
+app.get('/lotus', (req, res) => {
+    res.sendFile(path.join(__dirname, 'lotus.html'));
+});
+
 server.listen(3000);
