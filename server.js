@@ -3,13 +3,12 @@
 // const path = require('path');
 const http = require('http');
 
-
+const fs = require('fs');
 // This line of code creates the web server and puts it into a variable called server:
 const server = http.createServer();
 
 // A function that will handle responding to requests made by the browser
 function respondToRequestFromBrowser(request, response) {
-    const fs = require('fs')
     // This is how we are responding to the browser
     if (request.url === "/eeg"){
         const html = fs.readFileSync('eeg.html', 'utf-8'); 
@@ -18,29 +17,29 @@ function respondToRequestFromBrowser(request, response) {
         const png = fs.readFileSync(request.url.replace("/", ""));
         response.end(png);
     } else if (request.url === "/home"){
-        const html = fs.readFileSync('home.html', 'utf-8');
-        response.end(html);
+        const home = makepage("Home", "home.html");
+        response.end(home);
     } else if (request.url === "/user"){
-        const html = fs.readFileSync('user.html', 'utf-8');
-        response.end(html);
+        const user = makepage("User", "user.html");
+        response.end(user);
     } else if (request.url === "/phone"){
-        const html = fs.readFileSync('phone.html', 'utf-8');
-        response.end(html);
+        const phone = makepage("Phone", "phone.html");
+        response.end(phone);
     } else if (request.url === "/lotus"){
-        const html = fs.readFileSync('lotus.html', 'utf-8');
-        response.end(html);
+        const lotus = makepage("Lotus", "lotus.html");
+        response.end(lotus);
     } else if (request.url === "/calendar"){
-        const html = fs.readFileSync('calendar.html', 'utf-8');
-        response.end(html);
+        const calendar = makepage("Calendar", "calendar.html");
+        response.end(calendar);
     } else if (request.url === "/destress"){
-        const html = fs.readFileSync('Destress.html', 'utf-8'); 
-        response.end(html);
+        const destress = makepage("Destress", "destress.html");
+        response.end(destress);
     } else if (request.url === "/journal"){
-            const html = fs.readFileSync('Journal.html', 'utf-8'); 
-            response.end(html);
+        const journal = makepage("Journal", "journal.html");
+        response.end(journal);
     } else if (request.url === "/profile"){
-            const html = fs.readFileSync('Profile.html', 'utf-8'); 
-            response.end(html);
+        const profile = makepage("Profile", "profile.html");
+        response.end(profile);
     } else {
         response.end('ERROR');
     }
@@ -66,5 +65,15 @@ console.log(request.url)
 // app.get('/lotus', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'lotus.html'));
 // });
+server.on('request', respondToRequestFromBrowser)
+server.listen(3000);
 
-// server.listen(3000);
+function makepage(title, content){
+    let html = fs.readFileSync('template.html', 'utf-8');
+    const header = fs.readFileSync('header.html', 'utf-8');
+    const contentData = fs.readFileSync(content, 'utf-8');
+    html = html.replaceAll("paste header here", header);
+    html = html.replaceAll("paste title here", title);
+    html = html.replaceAll("paste content here", contentData);
+    return html;
+}
