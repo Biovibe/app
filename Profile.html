@@ -16,7 +16,6 @@
             color: white;
             font-size: 25px;
             float:left;
-            padding: 7px;
         }
         .square {
             height: 500px;
@@ -57,9 +56,6 @@
             height:100px;
         }
         .user{
-            background:url(user.png) no-repeat;
-            cursor:pointer;
-            border:none;
             width:100px;
             height:100px;
             top: 5%; 
@@ -120,32 +116,31 @@
 <body onload="setInterval(fetchBPM,1000)">
     <main>
     <div class="header"; style="font-family:Verdana">
-        <h1>Biovibe</h1>
+        <h1><a href="/eeg">Biovibe </a></h1>
     </div>
     <div class="calendar2">
-        <h1>Calendar |</h1>
+        <h1><a href="/calendar">Calendar |</a></h1>
     </div>
     <div class="destress">
-        <h1>Destress |</h1>
+        <h1><a href="/destress">Destress |</a></h1>
     </div>
     <div class="myJournal">
-        <h1>My Journal |</h1>
+        <h1><a href="/journal">My Journal |</a></h1>
     </div>
+    <style>
+        a {
+          text-decoration: none;
+          color: white;
+        }
+    </style>
     <div class="heart">
         <h1>Profile</h1>
     </div>
     <div>
         <div class="square"></div>
-    <span class="dot"></span>
-    <span class="box"></span>
-    <div {
-        display: flex;
-        justify-content: center;
-    }>
     <input class="myButton" type="submit" value="">
     <input class="lotus" type="submit" value="">
     <input class="home" type="submit" value="">
-    <input class="user" type="submit" value="">
     <input class="phone" type="submit" value="">
     <input class="calendar" type="submit" value="">
 </main>

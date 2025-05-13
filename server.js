@@ -41,11 +41,17 @@ function respondToRequestFromBrowser(request, response) {
     } else if (request.url === "/profile"){
             const html = fs.readFileSync('Profile.html', 'utf-8'); 
             response.end(html);
+    } else if (request.url === "/journal1"){
+            const html = fs.readFileSync('journal1.html', 'utf-8'); 
+            response.end(html);
     } else {
         response.end('ERROR');
     }
 console.log(request.url)
 }
+
+server.on('request', respondToRequestFromBrowser);
+server.listen(3000);
 
 // app.get('/', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'home.html'));
@@ -65,6 +71,4 @@ console.log(request.url)
 
 // app.get('/lotus', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'lotus.html'));
-// });
-
-// server.listen(3000);
+// })
