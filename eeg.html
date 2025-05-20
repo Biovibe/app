@@ -116,35 +116,41 @@
             }
         }
     </script>
-    <script>
-        function getData() {
-          return Math.random();
-        }
-    
-        Plotly.plot('chart',[ {
-          y:[getData()],
-          type:'line'
-        }]);
-    
-        var count=0;
-    
-        setInterval(function(){
-          Plotly.extendTraces('chart',{y: [[getData()]]}, [0]);
-          count++;
-    
-          if(count>500) {
-            Plotly.relayout('chart', {
-              xaxis: {
-                range: [count-500,count]
-              }
-            });
-          }
-        },200);
-    
-      </script>
+
 </head>
 
 <body onload="setInterval(fetchBPM,1000)">
+    <div class ="wrapper">
+
+        <div id = "chart"></div>
+        
+        <script>
+            function getData() {
+              return Math.random();
+            }
+        
+            Plotly.newPlot('chart',[{
+              y:[getData()],
+              type:'line'
+            }]);
+        
+            var count=0;
+        
+            setInterval(function(){
+              Plotly.extendTraces('chart',{y: [[getData()]]}, [0]);
+              count++;
+         
+              if(count>50) {
+                Plotly.relayout('chart', {
+                  xaxis: {
+                    range: [count-50,count]
+                  }
+                });
+              }
+            },200);
+        
+          </script>
+    </div>
     <main>
     <div class="header"; style="font-family:Verdana">
         <h1>Biovibe</h1>
