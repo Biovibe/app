@@ -71,8 +71,10 @@ server.listen(3000);
 function makepage(title, content){
     let html = fs.readFileSync('template.html', 'utf-8');
     const header = fs.readFileSync('header.html', 'utf-8');
+    const headerMobile = fs.readFileSync('headerMobile.html', 'utf-8')
     const contentData = fs.readFileSync(content, 'utf-8');
     html = html.replaceAll("paste header here", header);
+    html = html.replaceAll("paste mobile header here", headerMobile);
     html = html.replaceAll("paste title here", title);
     html = html.replaceAll("paste content here", contentData);
     return html;

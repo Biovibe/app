@@ -19,13 +19,37 @@
             border-radius: 8px;
             border: 1px solid black;
         }
+     
+        .mobile {
+            display: none;
+        }
+
+        .desktop {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+        .mobile {
+            display: block; 
+        }
+        .desktop {
+            display: none; 
+        }
+        }
+
+        
     </style>
 </head>
 <body>
 
     <h1>paste title here</h1>
 
-paste header here
+<header class = "desktop">
+    paste header here
+</header>
+<header class = "mobile">
+    paste mobile header here
+</header>
 paste content here
 
 </body>
