@@ -16,18 +16,18 @@ function respondToRequestFromBrowser(request, response) {
     } else if (request.url.endsWith(".png")){
         const png = fs.readFileSync(request.url.replace("/", ""));
         response.end(png);
-    } else if (request.url === "/home"){
-        const home = makepage("Home", "home.html");
-        response.end(home);
-    } else if (request.url === "/user"){
-        const user = makepage("User", "user.html");
-        response.end(user);
-    } else if (request.url === "/phone"){
-        const phone = makepage("Phone", "phone.html");
-        response.end(phone);
-    } else if (request.url === "/lotus"){
-        const lotus = makepage("Lotus", "lotus.html");
-        response.end(lotus);
+    // } else if (request.url === "/home"){
+    //     const home = makepage("Home", "home.html");
+    //     response.end(home);
+    // } else if (request.url === "/user"){
+    //     const user = makepage("User", "user.html");
+    //     response.end(user);
+    // } else if (request.url === "/phone"){
+    //     const phone = makepage("Phone", "phone.html");
+    //     response.end(phone);
+    // } else if (request.url === "/lotus"){
+    //     const lotus = makepage("Lotus", "lotus.html");
+    //     response.end(lotus);
     } else if (request.url === "/calendar"){
         const calendar = makepage("Calendar", "calendar.html");
         response.end(calendar);
@@ -40,6 +40,12 @@ function respondToRequestFromBrowser(request, response) {
     } else if (request.url === "/profile"){
         const profile = makepage("Profile", "profile.html");
         response.end(profile);
+    } else if (request.url === "/data"){
+        const profile = makepage("Data", "data.html");
+        response.end(profile);
+    } else if (request.url === "/template.css"){
+        const css = fs.readFileSync('template.css', 'utf-8');
+response.end(css);
     } else {
         response.end('ERROR');
     }
@@ -70,11 +76,9 @@ server.listen(3000);
 
 function makepage(title, content){
     let html = fs.readFileSync('template.html', 'utf-8');
-    const header = fs.readFileSync('header.html', 'utf-8');
-    const headerMobile = fs.readFileSync('headerMobile.html', 'utf-8')
+    const footer = fs.readFileSync('footer.html', 'utf-8');
     const contentData = fs.readFileSync(content, 'utf-8');
-    html = html.replaceAll("paste header here", header);
-    html = html.replaceAll("paste mobile header here", headerMobile);
+    html = html.replaceAll("paste footer here", footer);
     html = html.replaceAll("paste title here", title);
     html = html.replaceAll("paste content here", contentData);
     return html;
