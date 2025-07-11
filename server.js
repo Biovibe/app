@@ -16,6 +16,10 @@ function respondToRequestFromBrowser(request, response) {
     } else if (request.url.endsWith(".png")){
         const png = fs.readFileSync(request.url.replace("/", ""));
         response.end(png);
+    } else if (request.url.endsWith(".svg")){
+        const svg = fs.readFileSync(request.url.replace("/", ""), 'utf-8');
+        response.setHeader("Content-Type", "image/svg+xml")
+        response.end(svg);
     // } else if (request.url === "/home"){
     //     const home = makepage("Home", "home.html");
     //     response.end(home);
@@ -28,20 +32,20 @@ function respondToRequestFromBrowser(request, response) {
     // } else if (request.url === "/lotus"){
     //     const lotus = makepage("Lotus", "lotus.html");
     //     response.end(lotus);
-    } else if (request.url === "/calendar"){
-        const calendar = makepage("Calendar", "calendar.html");
+    } else if (request.url === "/relax"){
+    const calendar = makepage("Relax", "relax.html");
         response.end(calendar);
-    } else if (request.url === "/destress"){
-        const destress = makepage("Destress", "destress.html");
+    } else if (request.url === "/myStress"){
+        const destress = makepage("My stress", "myStress.html");
         response.end(destress);
     } else if (request.url === "/journal"){
         const journal = makepage("Journal", "journal.html");
         response.end(journal);
-    } else if (request.url === "/profile"){
-        const profile = makepage("Profile", "profile.html");
+    } else if (request.url === "/aboutMe"){
+        const profile = makepage("About me", "aboutMe.html");
         response.end(profile);
-    } else if (request.url === "/data"){
-        const profile = makepage("Data", "data.html");
+    } else if (request.url === "/main"){
+        const profile = makepage("Main", "main.html");
         response.end(profile);
     } else if (request.url === "/template.css"){
         const css = fs.readFileSync('template.css', 'utf-8');
