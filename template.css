@@ -30,7 +30,10 @@ footer > * {
     text-decoration: none;
 }
 #Relax {
-    filter: invert(42%) sepia(93%) saturate(152%) hue-rotate(87deg) brightness(119%) contrast(119%); /* Example filter values */
+    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
+}
+#myStress {
+    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
 }
 #Home {
     background-color: #d8d3f2;
@@ -43,6 +46,12 @@ footer > * {
     position: relative;
     top: -20px;
   }
+#Journal {
+    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
+}
+#aboutMe {
+    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
+}
 
 
   
