@@ -1,11 +1,9 @@
-// const express = require('express');
-// const app = express();
-// const path = require('path');
-const http = require('http');
+const express = require('express');
+const app = express();
+const path = require('path');
 
 const fs = require('fs');
 // This line of code creates the web server and puts it into a variable called server:
-const server = http.createServer();
 
 // A function that will handle responding to requests made by the browser
 function respondToRequestFromBrowser(request, response) {
@@ -56,27 +54,45 @@ response.end(css);
 console.log(request.url)
 }
 
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'home.html'));
-// });
+app.use(express.static('public'))
 
-// app.get('/calendar', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'calendar.html'));
-// });
+app.get('/eeg', (req, res) => {
+    res.readFileSync('eeg.html', 'utf-8'); 
+});
+app.get('/png', (req, res) => {
+    res.readFileSync(request.url.replace("/", ""));
+});
+app.get('/svg', (req, res) => {
+    res.readFileSync(request.url.replace("/", ""), 'utf-8');
+    res.setHeader("Content-Type", "image/svg+xml")
+});
+app.get('/main', (req, res) => {
+    const main = makepage("Main", "main.html");
+    res.send(main);
+});
+app.get('/aboutMe', (req, res) => {
+    const aboutMe = makepage("About me", "aboutMe.html");
+    res.send(aboutMe);
+});
+app.get('/myStress', (req, res) => {
+    const myStress = makepage("My stress", "myStress.html");
+    res.send(myStress);
+});
+app.get('/relax', (req, res) => {
+    const relax = makepage("Relax", "relax.html");
+    res.send(relax);
+});
+app.get('/journal', (req, res) => {
+    const journal = makepage("Journal", "journal.html");
+    res.send(journal);
+});
+app.get('/template.css', (req, res) => {
+    res.readFileSync('template.css', 'utf-8')});
 
-// app.get('/journal', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'journal.html'));
-// });
-
-// app.get('/phone', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'phone.html'));
-// });
-
-// app.get('/lotus', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'lotus.html'));
-// });
-server.on('request', respondToRequestFromBrowser)
-server.listen(3000);
+const port = 3000
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  })
 
 function makepage(title, content){
     let html = fs.readFileSync('template.html', 'utf-8');
