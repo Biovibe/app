@@ -1,5 +1,19 @@
+/* CSS Variables for Color Scheme */
+:root {
+    --light-lavender: #e6e6fa;
+    --greyish-purple: #d8bfd8;
+    --purple: #9370db;
+    --white: #ffffff;
+    --light-grey: #f8f9ff;
+    --dark-grey: #666666;
+    --black: #000000;
+    --dark-purple: #3e2741;
+    --primary-gradient: linear-gradient(135deg, var(--light-lavender) 0%, var(--greyish-purple) 50%, var(--purple) 100%);
+    --secondary-gradient: linear-gradient(135deg, var(--greyish-purple) 0%, var(--light-lavender) 100%);
+    --accent-gradient: linear-gradient(135deg, var(--purple) 0%, var(--light-lavender) 100%);
+}
 body {
-    background-color: #928ede;
+    background-color: var(--purple);
     font-family: Arial, sans-serif;
     text-align: center;
     width: 100vw;
@@ -8,12 +22,33 @@ body {
 }
 main {
     max-width: 1024px;
-    background-color: #b7b4e9;
+    background-color: var(--light-lavender);
+    font-family: Arial, sans-serif;
     height: 100%;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+header {
+    background-color: var(--white);
+    display:flex;
+    flex-direction: row; 
+    align-items:normal; 
+    justify-content:left; 
+}
+header > * {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 50px;
+    padding-right: 10px;
+    font-size: 1cm;
+    color: var(--grayish-purple);
+    text-decoration: none;
+    font-family: Arial, sans-serif;
 }
 footer {
-    background-color: #f8f8f8;
+    background-color: var(--white);
     display:flex;
     align-items:center; /* Centers everything vertically */
     justify-content:space-evenly;   /* Centers everything horizontally */
@@ -26,17 +61,17 @@ footer > * {
     flex-direction: column;
     align-items: center;
     font-size: 0.75rem;
-    color: #928ede;
+    color: var(--grayish-purple);
     text-decoration: none;
 }
 #Relax {
-    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
+    color: var(--purple);
 }
 #myStress {
-    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
+    color: var(--purple);
 }
 #Home {
-    background-color: #d8d3f2;
+    background-color: var(--light-lavender);
     border-radius: 50%;
     padding: 16px;
     box-shadow: 0 400px 12px rgb(0, 0, 0, 0);
@@ -45,12 +80,13 @@ footer > * {
     object-fit: contain;
     position: relative;
     top: -20px;
+
   }
 #Journal {
-    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
+    color: var(--purple);
 }
 #aboutMe {
-    filter: invert(48%) sepia(20%) saturate(400%) hue-rotate(220deg) brightness(85%) contrast(90%); /* Example filter values */
+    color: var(--purple);
 }
 
 

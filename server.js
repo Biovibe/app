@@ -96,8 +96,10 @@ app.listen(port, () => {
 
 function makepage(title, content){
     let html = fs.readFileSync('template.html', 'utf-8');
+    const header = fs.readFileSync('header.html', 'utf-8').replaceAll("title",title);
     const footer = fs.readFileSync('footer.html', 'utf-8');
     const contentData = fs.readFileSync(content, 'utf-8');
+    html = html.replaceAll("paste header here", header);
     html = html.replaceAll("paste footer here", footer);
     html = html.replaceAll("paste title here", title);
     html = html.replaceAll("paste content here", contentData);
