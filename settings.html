@@ -1,0 +1,519 @@
+<div class="settings-page">
+    <div class="back-button-container">
+        <button onclick="window.location.href='/main'" class="back-button">
+            ← Back to Main
+        </button>
+    </div>
+    
+    <div class="settings-container">
+        <div class="settings-card">
+            <h2 class="section-title">Profile Information</h2>
+            
+            <div class="setting-group">
+                <label for="userName" class="setting-label">Display Name</label>
+                <input type="text" id="userName" class="setting-input" placeholder="Enter your name" maxlength="50">
+                <p class="setting-help">This name will appear on your profile header</p>
+            </div>
+            
+            <div class="setting-group">
+                <label for="joinDate" class="setting-label">Join Date</label>
+                <input type="date" id="joinDate" class="setting-input">
+                <p class="setting-help">The date you started using the app</p>
+            </div>
+            
+            <div class="setting-group">
+                <label class="setting-label">Color Theme</label>
+                <div class="theme-selector">
+                    <div class="theme-option" data-theme="purple" title="Purple Theme">
+                        <div class="theme-preview purple-theme"></div>
+                        <span class="theme-name">Purple</span>
+                    </div>
+                    <div class="theme-option" data-theme="green" title="Green Theme">
+                        <div class="theme-preview green-theme"></div>
+                        <span class="theme-name">Green</span>
+                    </div>
+                    <div class="theme-option" data-theme="blue" title="Blue Theme">
+                        <div class="theme-preview blue-theme"></div>
+                        <span class="theme-name">Blue</span>
+                    </div>
+                    <div class="theme-option" data-theme="red" title="Red/Pink Theme">
+                        <div class="theme-preview red-theme"></div>
+                        <span class="theme-name">Red/Pink</span>
+                    </div>
+                </div>
+                <p class="setting-help">Choose your preferred color theme for the app</p>
+            </div>
+            
+            <div class="button-group">
+                <button id="saveSettingsBtn" class="save-button">
+                    Save Changes
+                </button>
+                <button onclick="resetToDefaults()" class="reset-button">
+                    Reset to Defaults
+                </button>
+            </div>
+        </div>
+        
+        <div class="preview-card">
+            <h2 class="section-title">Preview</h2>
+            <div class="preview-header">
+                <h3 id="previewName">Joe Schmoe</h3>
+                <p id="previewStats">363 day streak • Joined 3/25/20</p>
+            </div>
+            <p class="preview-note">This is how your profile will appear</p>
+        </div>
+    </div>
+    
+    <div id="saveMessage" class="message success" style="display: none;">
+        ✅ Settings saved successfully!
+    </div>
+    
+    <div id="errorMessage" class="message error" style="display: none;">
+        ❌ Error saving settings. Please try again.
+    </div>
+</div>
+
+<style>
+.settings-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.back-button-container {
+    margin-bottom: 30px;
+}
+
+.back-button {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: #6c757d;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.back-button:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.settings-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.settings-card, .preview-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 25px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #9370db;
+}
+
+.setting-group {
+    margin-bottom: 25px;
+}
+
+.setting-label {
+    display: block;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.setting-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+.setting-input:focus {
+    outline: none;
+    border-color: #9370db;
+    box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.1);
+}
+
+.setting-help {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 5px 0 0 0;
+    font-style: italic;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.save-button {
+    background: linear-gradient(135deg, #9370db, #8a2be2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1;
+}
+
+.save-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(147, 112, 219, 0.3);
+}
+
+.reset-button {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1;
+}
+
+.reset-button:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.preview-header {
+    background: linear-gradient(135deg, #e6e6fa, #d8bfd8);
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.preview-header h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    color: #4a148c;
+}
+
+.preview-header p {
+    font-size: 1rem;
+    margin: 0;
+    color: #6a1b9a;
+}
+
+.preview-note {
+    color: #666;
+    font-size: 0.9rem;
+    text-align: center;
+    font-style: italic;
+    margin: 0;
+}
+
+.theme-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 8px;
+}
+
+.theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f9f9f9;
+}
+
+.theme-option:hover {
+    border-color: #ccc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.theme-option.selected {
+    border-color: #9370db;
+    background: #f0e6ff;
+    box-shadow: 0 4px 15px rgba(147, 112, 219, 0.2);
+}
+
+.theme-preview {
+    width: 60px;
+    height: 40px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.purple-theme {
+    background: linear-gradient(135deg, #9370db, #ce93d8);
+}
+
+.green-theme {
+    background: linear-gradient(135deg, #4caf50, #81c784);
+}
+
+.blue-theme {
+    background: linear-gradient(135deg, #2196f3, #64b5f6);
+}
+
+.red-theme {
+    background: linear-gradient(135deg, #e91e63, #f48fb1);
+}
+
+.theme-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.message {
+    padding: 15px 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    margin: 20px 0;
+}
+
+.message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .settings-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .settings-card, .preview-card {
+        padding: 20px;
+    }
+    
+    .theme-selector {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .theme-option {
+        padding: 12px;
+    }
+    
+    .theme-preview {
+        width: 50px;
+        height: 35px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userNameInput = document.getElementById('userName');
+    const joinDateInput = document.getElementById('joinDate');
+    const saveButton = document.getElementById('saveSettingsBtn');
+    const saveMessage = document.getElementById('saveMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const previewName = document.getElementById('previewName');
+    const previewStats = document.getElementById('previewStats');
+    const themeOptions = document.querySelectorAll('.theme-option');
+    
+    let selectedTheme = 'purple';
+    
+    // Load current settings
+    loadCurrentSettings();
+    
+    // Update preview when inputs change
+    userNameInput.addEventListener('input', updatePreview);
+    joinDateInput.addEventListener('input', updatePreview);
+    
+    // Theme selection
+    themeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            themeOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedTheme = this.dataset.theme;
+            updatePreview();
+        });
+    });
+    
+    // Save button click
+    saveButton.addEventListener('click', saveSettings);
+    
+    function loadCurrentSettings() {
+        fetch('/api/getUserSettings')
+            .then(response => response.json())
+            .then(data => {
+                userNameInput.value = data.name || 'Joe Schmoe';
+                joinDateInput.value = data.joinDate || '2020-03-25';
+                selectedTheme = data.theme || 'purple';
+                
+                // Set selected theme
+                themeOptions.forEach(opt => opt.classList.remove('selected'));
+                const selectedOption = document.querySelector(`[data-theme="${selectedTheme}"]`);
+                if (selectedOption) {
+                    selectedOption.classList.add('selected');
+                }
+                
+                updatePreview();
+            })
+            .catch(error => {
+                console.log('Using default settings');
+                userNameInput.value = 'Joe Schmoe';
+                joinDateInput.value = '2020-03-25';
+                selectedTheme = 'purple';
+                document.querySelector('[data-theme="purple"]').classList.add('selected');
+                updatePreview();
+            });
+    }
+    
+    function updatePreview() {
+        const name = userNameInput.value.trim() || 'Joe Schmoe';
+        const joinDate = joinDateInput.value || '2020-03-25';
+        
+        // Calculate days since join date
+        const joinDateObj = new Date(joinDate);
+        const today = new Date();
+        const diffTime = Math.abs(today - joinDateObj);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Format join date
+        const formattedDate = joinDateObj.toLocaleDateString('en-US', {
+            month: 'numeric',
+            day: 'numeric',
+            year: '2-digit'
+        });
+        
+        previewName.textContent = name;
+        previewStats.textContent = `${diffDays} day streak • Joined ${formattedDate}`;
+        
+        // Update preview header with theme colors
+        const previewHeader = document.querySelector('.preview-header');
+        const themeColors = {
+            purple: 'linear-gradient(135deg, #e6e6fa, #d8bfd8)',
+            green: 'linear-gradient(135deg, #e8f5e8, #c8e6c9)',
+            blue: 'linear-gradient(135deg, #e3f2fd, #bbdefb)',
+            red: 'linear-gradient(135deg, #fce4ec, #f8bbd9)'
+        };
+        previewHeader.style.background = themeColors[selectedTheme] || themeColors.purple;
+    }
+    
+    function saveSettings() {
+        const name = userNameInput.value.trim();
+        const joinDate = joinDateInput.value;
+        
+        if (!name) {
+            showError('Please enter a name');
+            return;
+        }
+        
+        if (!joinDate) {
+            showError('Please select a join date');
+            return;
+        }
+        
+        if (name.length > 50) {
+            showError('Name must be 50 characters or less');
+            return;
+        }
+        
+        // Validate join date is not in the future
+        const joinDateObj = new Date(joinDate);
+        const today = new Date();
+        if (joinDateObj > today) {
+            showError('Join date cannot be in the future');
+            return;
+        }
+        
+        fetch('/api/saveUserSettings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, joinDate, theme: selectedTheme })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess('Settings saved successfully!');
+            } else {
+                showError(data.error || 'Error saving settings');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Error saving settings. Please try again.');
+        });
+    }
+    
+    function showSuccess(message) {
+        saveMessage.textContent = '✅ ' + message;
+        saveMessage.style.display = 'block';
+        errorMessage.style.display = 'none';
+        setTimeout(() => {
+            saveMessage.style.display = 'none';
+        }, 3000);
+    }
+    
+    function showError(message) {
+        errorMessage.textContent = '❌ ' + message;
+        errorMessage.style.display = 'block';
+        saveMessage.style.display = 'none';
+        setTimeout(() => {
+            errorMessage.style.display = 'none';
+        }, 5000);
+    }
+    
+    window.resetToDefaults = function() {
+        if (confirm('Are you sure you want to reset to default settings?')) {
+            userNameInput.value = 'Joe Schmoe';
+            joinDateInput.value = '2020-03-25';
+            selectedTheme = 'purple';
+            
+            // Reset theme selection
+            themeOptions.forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('[data-theme="purple"]').classList.add('selected');
+            
+            updatePreview();
+        }
+    };
+});
+</script>
