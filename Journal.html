@@ -1,1 +1,951 @@
-<html></html>
+<div class="journal-content">
+    <!-- Tab Selector -->
+    <div class="tab-selector">
+        <button class="tab-btn active" data-tab="journal" id="journal-tab">Journal</button>
+        <button class="tab-btn" data-tab="reflect" id="reflect-tab">Reflect</button>
+    </div>
+
+    <!-- Date Navigation -->
+    <div class="date-navigation">
+        <button class="nav-arrow" id="prev-date">&#8249;</button>
+        <div class="date-display" id="date-display">
+            <span class="current-date" id="current-date">Today</span>
+            <span class="dropdown-arrow">&#9662;</span>
+        </div>
+        <button class="nav-arrow" id="next-date">&#8250;</button>
+    </div>
+
+    <!-- Date Picker Modal -->
+    <div class="date-picker-modal" id="date-picker-modal">
+        <div class="date-picker-content">
+            <input type="date" id="date-picker" />
+            <div class="date-picker-buttons">
+                <button id="date-picker-cancel">Cancel</button>
+                <button id="date-picker-confirm">Select</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Subtitle -->
+    <div class="date-subtitle">
+        <span>Feelings and events.</span>
+    </div>
+
+    <!-- Journal Entries Container -->
+    <div class="journal-entries" id="journal-entries">
+        <!-- Sample Journal Entries -->
+        <div class="journal-card">
+            <div class="journal-card-header">
+                <h3 class="journal-title">Journal 1</h3>
+                <button class="journal-menu" onclick="toggleJournalMenu(this)">⋮</button>
+                <div class="journal-menu-dropdown">
+                    <button onclick="editJournal(this)">Edit</button>
+                    <button onclick="deleteJournal(this)">Delete</button>
+                </div>
+            </div>
+            <div class="journal-timestamp">Last edited 9:00 AM</div>
+            <div class="journal-preview">"Today I lorem ipsum lorem ip..."</div>
+        </div>
+
+        <div class="journal-card">
+            <div class="journal-card-header">
+                <h3 class="journal-title">Journal 2</h3>
+                <button class="journal-menu" onclick="toggleJournalMenu(this)">⋮</button>
+                <div class="journal-menu-dropdown">
+                    <button onclick="editJournal(this)">Edit</button>
+                    <button onclick="deleteJournal(this)">Delete</button>
+                </div>
+            </div>
+            <div class="journal-timestamp">Last edited 8:00 AM</div>
+            <div class="journal-preview">"Today I lorem ipsum lorem ip..."</div>
+        </div>
+
+        <div class="journal-card">
+            <div class="journal-card-header">
+                <h3 class="journal-title">Journal 3</h3>
+                <button class="journal-menu" onclick="toggleJournalMenu(this)">⋮</button>
+                <div class="journal-menu-dropdown">
+                    <button onclick="editJournal(this)">Edit</button>
+                    <button onclick="deleteJournal(this)">Delete</button>
+                </div>
+            </div>
+            <div class="journal-timestamp">Last edited 8:00 AM</div>
+            <div class="journal-preview">"Today I lorem ipsum lorem ip..."</div>
+        </div>
+    </div>
+
+    <!-- Add Journal Button -->
+    <div class="add-journal-container">
+        <button class="add-journal-btn" id="add-journal-btn">
+            <div class="add-journal-icon">✚</div>
+            <span>Add journal</span>
+        </button>
+    </div>
+
+    <!-- Journal Editor Modal -->
+    <div class="journal-editor-modal" id="journal-editor-modal">
+        <div class="journal-editor-content">
+            <div class="journal-editor-header">
+                <h3 id="journal-editor-title">New Journal Entry</h3>
+                <button class="close-btn" id="close-journal-editor">✕</button>
+            </div>
+            <div class="journal-editor-body">
+                <input type="text" id="journal-title-input" placeholder="Journal Title" maxlength="50">
+                <textarea id="journal-content-input" placeholder="Write your thoughts here..." rows="10"></textarea>
+            </div>
+            <div class="journal-editor-footer">
+                <button id="cancel-journal" class="btn-secondary">Cancel</button>
+                <button id="save-journal" class="btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.journal-content {
+    padding: 20px;
+    background: var(--light-lavender);
+    min-height: 500px;
+}
+
+.tab-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 0;
+}
+
+.tab-btn {
+    padding: 12px 40px;
+    border: none;
+    background: var(--greyish-purple);
+    color: var(--dark-grey);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+
+.tab-btn:first-child {
+    border-radius: 20px 0 0 20px;
+}
+
+.tab-btn:last-child {
+    border-radius: 0 20px 20px 0;
+}
+
+.tab-btn.active {
+    background: var(--purple);
+    color: var(--white);
+}
+
+.tab-btn:hover:not(.active) {
+    background: var(--light-grey);
+}
+
+.date-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 20px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.nav-arrow {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--dark-grey);
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.nav-arrow:hover {
+    background: var(--greyish-purple);
+    color: var(--purple);
+}
+
+.date-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--black);
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.date-display:hover {
+    color: var(--purple);
+}
+
+.dropdown-arrow {
+    color: var(--purple);
+    font-size: 0.8rem;
+}
+
+.date-subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--dark-grey);
+    font-size: 0.9rem;
+}
+
+/* Journal Entries */
+.journal-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.journal-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.journal-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.journal-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.journal-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--black);
+}
+
+.journal-menu {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--dark-grey);
+    cursor: pointer;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.journal-menu:hover {
+    background: var(--light-grey);
+    color: var(--purple);
+}
+
+.journal-menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    min-width: 120px;
+    overflow: hidden;
+}
+
+.journal-menu-dropdown.show {
+    display: block;
+}
+
+.journal-menu-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: var(--white);
+    color: var(--black);
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.journal-menu-dropdown button:hover {
+    background: var(--light-grey);
+}
+
+.journal-menu-dropdown button:last-child:hover {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.journal-timestamp {
+    color: var(--dark-grey);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.journal-preview {
+    color: var(--black);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Add Journal Button */
+.add-journal-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.add-journal-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--greyish-purple);
+    border: none;
+    border-radius: 25px;
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    color: var(--black);
+}
+
+.add-journal-btn:hover {
+    background: var(--purple);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(147, 112, 219, 0.3);
+}
+
+.add-journal-icon {
+    width: 24px;
+    height: 24px;
+    background: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: var(--purple);
+    transition: all 0.3s ease;
+}
+
+.add-journal-btn:hover .add-journal-icon {
+    background: var(--white);
+    color: var(--purple);
+}
+
+/* Date Picker Modal */
+.date-picker-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.date-picker-modal.show {
+    display: flex;
+}
+
+.date-picker-content {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.date-picker-content input[type="date"] {
+    width: 200px;
+    padding: 12px;
+    border: 2px solid var(--greyish-purple);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    text-align: center;
+}
+
+.date-picker-content input[type="date"]:focus {
+    border-color: var(--purple);
+}
+
+.date-picker-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.date-picker-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+#date-picker-cancel {
+    background: var(--light-grey);
+    color: var(--dark-grey);
+}
+
+#date-picker-cancel:hover {
+    background: var(--greyish-purple);
+}
+
+#date-picker-confirm {
+    background: var(--purple);
+    color: var(--white);
+}
+
+#date-picker-confirm:hover {
+    background: var(--dark-purple);
+}
+
+/* Journal Editor Modal */
+.journal-editor-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    justify-content: center;
+    align-items: center;
+}
+
+.journal-editor-modal.show {
+    display: flex;
+}
+
+.journal-editor-content {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.journal-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.journal-editor-header h3 {
+    margin: 0;
+    color: var(--black);
+    font-size: 1.3rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--dark-grey);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: var(--light-grey);
+    color: var(--purple);
+}
+
+.journal-editor-body {
+    padding: 25px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#journal-title-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--greyish-purple);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+#journal-title-input:focus {
+    border-color: var(--purple);
+}
+
+#journal-content-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--greyish-purple);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+    min-height: 200px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+#journal-content-input:focus {
+    border-color: var(--purple);
+}
+
+.journal-editor-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding: 20px 25px;
+    border-top: 1px solid var(--light-grey);
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    border: 2px solid var(--greyish-purple);
+    background: var(--white);
+    color: var(--black);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--light-grey);
+    border-color: var(--purple);
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    border: none;
+    background: var(--purple);
+    color: var(--white);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--dark-purple);
+    transform: translateY(-1px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .journal-content {
+        padding: 15px;
+    }
+    
+    .date-navigation {
+        gap: 15px;
+    }
+    
+    .date-display {
+        font-size: 1rem;
+    }
+    
+    .tab-btn {
+        padding: 10px 30px;
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+<script>
+// Global variables
+let currentDate = new Date();
+let currentEditingJournal = null;
+let journalCounter = 4; // Start from 4 since we have 3 sample journals
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    updateDateDisplay();
+    initializeEventListeners();
+    initializeJournalListeners();
+});
+
+// Update the date display text
+function updateDateDisplay() {
+    const dateElement = document.getElementById('current-date');
+    const today = new Date();
+    
+    // Always show the formatted date, including "Today, Month Day" for today
+    dateElement.textContent = formatDate(currentDate);
+}
+
+// Format date as "Today, Jun 3" or "Monday, Jun 3"
+function formatDate(date) {
+    const today = new Date();
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
+    
+    if (isSameDay(date, today)) {
+        return 'Today, ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else {
+        return date.toLocaleDateString('en-US', options);
+    }
+}
+
+// Check if two dates are the same day
+function isSameDay(date1, date2) {
+    return date1.toDateString() === date2.toDateString();
+}
+
+// Initialize all event listeners
+function initializeEventListeners() {
+    // Date navigation arrows
+    document.getElementById('prev-date').addEventListener('click', function() {
+        navigateDate(-1);
+    });
+    
+    document.getElementById('next-date').addEventListener('click', function() {
+        navigateDate(1);
+    });
+    
+    // Date display click (show date picker)
+    document.getElementById('date-display').addEventListener('click', function() {
+        showDatePicker();
+    });
+    
+    // Tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            changeTab(this.dataset.tab);
+        });
+    });
+    
+    // Date picker modal
+    document.getElementById('date-picker-cancel').addEventListener('click', function() {
+        hideDatePicker();
+    });
+    
+    document.getElementById('date-picker-confirm').addEventListener('click', function() {
+        confirmDateSelection();
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('date-picker-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideDatePicker();
+        }
+    });
+}
+
+// Navigate date by increment (days)
+function navigateDate(increment) {
+    currentDate.setDate(currentDate.getDate() + increment);
+    updateDateDisplay();
+    
+    // Here you would typically reload the journal entries for the new date
+    console.log('Date changed to:', currentDate);
+}
+
+// Change the active tab (journal/reflect)
+function changeTab(newTab) {
+    // Update active button
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById(newTab + '-tab').classList.add('active');
+    
+    // Here you would typically load different content based on the tab
+    console.log('Tab changed to:', newTab);
+}
+
+// Show the date picker modal
+function showDatePicker() {
+    const modal = document.getElementById('date-picker-modal');
+    const datePicker = document.getElementById('date-picker');
+    
+    // Set the date picker to current date
+    datePicker.value = currentDate.toISOString().split('T')[0];
+    
+    modal.classList.add('show');
+}
+
+// Hide the date picker modal
+function hideDatePicker() {
+    const modal = document.getElementById('date-picker-modal');
+    modal.classList.remove('show');
+}
+
+// Confirm date selection from picker
+function confirmDateSelection() {
+    const datePicker = document.getElementById('date-picker');
+    const selectedDate = new Date(datePicker.value + 'T00:00:00');
+    
+    if (selectedDate && !isNaN(selectedDate.getTime())) {
+        currentDate = selectedDate;
+        updateDateDisplay();
+        hideDatePicker();
+        
+        // Here you would typically reload the journal entries for the selected date
+        console.log('Date selected:', currentDate);
+    }
+}
+
+// Initialize journal-specific event listeners
+function initializeJournalListeners() {
+    // Add journal button
+    document.getElementById('add-journal-btn').addEventListener('click', function() {
+        openJournalEditor();
+    });
+    
+    // Journal editor modal
+    document.getElementById('close-journal-editor').addEventListener('click', function() {
+        closeJournalEditor();
+    });
+    
+    document.getElementById('cancel-journal').addEventListener('click', function() {
+        closeJournalEditor();
+    });
+    
+    document.getElementById('save-journal').addEventListener('click', function() {
+        saveJournal();
+    });
+    
+    // Close journal editor when clicking outside
+    document.getElementById('journal-editor-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeJournalEditor();
+        }
+    });
+    
+    // Close menus when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.journal-menu')) {
+            closeAllMenus();
+        }
+    });
+}
+
+// Toggle journal menu dropdown
+function toggleJournalMenu(button) {
+    const dropdown = button.nextElementSibling;
+    const isCurrentlyOpen = dropdown.classList.contains('show');
+    
+    // Close all other menus first
+    closeAllMenus();
+    
+    // Toggle current menu
+    if (!isCurrentlyOpen) {
+        dropdown.classList.add('show');
+    }
+}
+
+// Close all journal menus
+function closeAllMenus() {
+    document.querySelectorAll('.journal-menu-dropdown').forEach(menu => {
+        menu.classList.remove('show');
+    });
+}
+
+// Open journal editor for new entry
+function openJournalEditor(journalCard = null) {
+    const modal = document.getElementById('journal-editor-modal');
+    const titleInput = document.getElementById('journal-title-input');
+    const contentInput = document.getElementById('journal-content-input');
+    const modalTitle = document.getElementById('journal-editor-title');
+    
+    currentEditingJournal = journalCard;
+    
+    if (journalCard) {
+        // Editing existing journal
+        const title = journalCard.querySelector('.journal-title').textContent;
+        const preview = journalCard.querySelector('.journal-preview').textContent.replace(/"/g, '');
+        
+        modalTitle.textContent = 'Edit Journal Entry';
+        titleInput.value = title;
+        contentInput.value = preview; // In a real app, you'd load the full content
+    } else {
+        // Creating new journal
+        modalTitle.textContent = 'New Journal Entry';
+        titleInput.value = '';
+        contentInput.value = '';
+    }
+    
+    modal.classList.add('show');
+    titleInput.focus();
+}
+
+// Close journal editor
+function closeJournalEditor() {
+    const modal = document.getElementById('journal-editor-modal');
+    modal.classList.remove('show');
+    currentEditingJournal = null;
+}
+
+// Save journal entry
+function saveJournal() {
+    const titleInput = document.getElementById('journal-title-input');
+    const contentInput = document.getElementById('journal-content-input');
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+    
+    if (!title) {
+        alert('Please enter a journal title');
+        titleInput.focus();
+        return;
+    }
+    
+    if (!content) {
+        alert('Please enter some content');
+        contentInput.focus();
+        return;
+    }
+    
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+    });
+    
+    if (currentEditingJournal) {
+        // Update existing journal
+        updateJournalCard(currentEditingJournal, title, content, timeString);
+    } else {
+        // Create new journal
+        createJournalCard(title, content, timeString);
+    }
+    
+    closeJournalEditor();
+}
+
+// Create new journal card
+function createJournalCard(title, content, timestamp) {
+    const journalEntries = document.getElementById('journal-entries');
+    const preview = content.length > 30 ? content.substring(0, 30) + '...' : content;
+    
+    const journalCard = document.createElement('div');
+    journalCard.className = 'journal-card';
+    journalCard.innerHTML = `
+        <div class="journal-card-header">
+            <h3 class="journal-title">${title}</h3>
+            <button class="journal-menu" onclick="toggleJournalMenu(this)">⋮</button>
+            <div class="journal-menu-dropdown">
+                <button onclick="editJournal(this)">Edit</button>
+                <button onclick="deleteJournal(this)">Delete</button>
+            </div>
+        </div>
+        <div class="journal-timestamp">Last edited ${timestamp}</div>
+        <div class="journal-preview">"${preview}"</div>
+    `;
+    
+    // Add to top of list
+    journalEntries.insertBefore(journalCard, journalEntries.firstChild);
+    
+    // Add animation
+    journalCard.style.opacity = '0';
+    journalCard.style.transform = 'translateY(-20px)';
+    setTimeout(() => {
+        journalCard.style.transition = 'all 0.3s ease';
+        journalCard.style.opacity = '1';
+        journalCard.style.transform = 'translateY(0)';
+    }, 10);
+    
+    journalCounter++;
+}
+
+// Update existing journal card
+function updateJournalCard(journalCard, title, content, timestamp) {
+    const preview = content.length > 30 ? content.substring(0, 30) + '...' : content;
+    
+    journalCard.querySelector('.journal-title').textContent = title;
+    journalCard.querySelector('.journal-timestamp').textContent = `Last edited ${timestamp}`;
+    journalCard.querySelector('.journal-preview').textContent = `"${preview}"`;
+}
+
+// Edit journal entry
+function editJournal(button) {
+    const journalCard = button.closest('.journal-card');
+    closeAllMenus();
+    openJournalEditor(journalCard);
+}
+
+// Delete journal entry
+function deleteJournal(button) {
+    const journalCard = button.closest('.journal-card');
+    const title = journalCard.querySelector('.journal-title').textContent;
+    
+    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+        journalCard.style.transition = 'all 0.3s ease';
+        journalCard.style.opacity = '0';
+        journalCard.style.transform = 'translateX(-100%)';
+        
+        setTimeout(() => {
+            journalCard.remove();
+        }, 300);
+    }
+    
+    closeAllMenus();
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft' && !isModalOpen()) {
+        navigateDate(-1);
+    } else if (e.key === 'ArrowRight' && !isModalOpen()) {
+        navigateDate(1);
+    } else if (e.key === 'Escape') {
+        if (document.getElementById('journal-editor-modal').classList.contains('show')) {
+            closeJournalEditor();
+        } else {
+            hideDatePicker();
+            closeAllMenus();
+        }
+    } else if (e.key === 'Enter' && e.ctrlKey) {
+        // Ctrl+Enter to save journal
+        if (document.getElementById('journal-editor-modal').classList.contains('show')) {
+            saveJournal();
+        }
+    }
+});
+
+// Check if any modal is open
+function isModalOpen() {
+    return document.getElementById('journal-editor-modal').classList.contains('show') ||
+           document.getElementById('date-picker-modal').classList.contains('show');
+}
+</script>
