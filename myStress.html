@@ -27,28 +27,64 @@
         <button class="period-btn" data-period="month" id="period-month">Month</button>
     </div>
 
-    <!-- Placeholder for chart and other components -->
-    <div class="chart-placeholder">
-        <p>Chart and session components will be added here</p>
+    <!-- Stress Level Chart -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <h3>Stress Level Monitoring</h3>
+            <div class="chart-controls">
+                <button class="control-btn pause-btn" id="pause-resume-btn">
+                    <span class="btn-icon">⏸️</span>
+                    <span class="btn-text">Pause</span>
+                </button>
+                <div id="connection-status" class="status disconnected">Disconnected</div>
+            </div>
+        </div>
+        <div id="stress-chart" class="stress-chart"></div>
+        <div class="chart-info">
+            <div class="current-reading">
+                <span class="label">Current Level:</span>
+                <span id="current-stress-level" class="value">--</span>
+            </div>
+            <div class="session-stats">
+                <div class="stat">
+                    <span class="stat-label">Average:</span>
+                    <span id="avg-stress" class="stat-value">--</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Peak:</span>
+                    <span id="peak-stress" class="stat-value">--</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Duration:</span>
+                    <span id="session-duration" class="stat-value">00:00</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
 .mystress-content {
-    padding: 20px;
+    padding: 15px;
     background: var(--light-lavender);
-    min-height: 500px;
+    min-height: calc(100vh - 200px); /* Account for header and footer */
+    max-height: calc(100vh - 200px); /* Prevent overflow */
+    overflow-y: auto; /* Allow scrolling if needed */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .date-navigation {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
     gap: 20px;
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
+    flex-shrink: 0; /* Don't shrink this element */
 }
 
 .nav-arrow {
@@ -89,7 +125,7 @@
     display: flex;
     justify-content: center;
     gap: 5px;
-    margin-bottom: 30px;
+    flex-shrink: 0; /* Don't shrink this element */
 }
 
 .period-btn {
@@ -112,13 +148,154 @@
     background: var(--greyish-purple);
 }
 
-.chart-placeholder {
-    text-align: center;
-    padding: 40px;
+/* Chart Container Styles */
+.chart-container {
     background: var(--white);
     border-radius: 15px;
-    margin: 20px 0;
+    margin: 15px 0;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Allow shrinking */
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--light-grey);
+}
+
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chart-header h3 {
+    margin: 0;
+    color: var(--black);
+    font-size: 1.4rem;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.pause-btn {
+    background: var(--purple);
+    color: var(--white);
+}
+
+.pause-btn:hover {
+    background: var(--dark-purple);
+}
+
+.pause-btn.paused {
+    background: #4CAF50;
+}
+
+.pause-btn.paused:hover {
+    background: #45a049;
+}
+
+.btn-icon {
+    font-size: 1rem;
+}
+
+.btn-text {
+    font-size: 0.85rem;
+}
+
+.status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status.connected {
+    background: #e8f5e8;
+    color: #4CAF50;
+}
+
+.status.disconnected {
+    background: #ffeaea;
+    color: #f44336;
+}
+
+.stress-chart {
+    width: 100%;
+    height: min(400px, calc(100vh - 400px)); /* Responsive height that fits viewport */
+    min-height: 250px; /* Minimum usable height */
+    margin: 15px 0;
+}
+
+.chart-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--light-grey);
+}
+
+.current-reading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.current-reading .label {
     color: var(--dark-grey);
+    font-weight: bold;
+}
+
+.current-reading .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--purple);
+    padding: 5px 15px;
+    background: var(--light-lavender);
+    border-radius: 8px;
+}
+
+.session-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--dark-grey);
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--black);
 }
 
 /* Date Picker Modal */
@@ -213,7 +390,10 @@
 /* Responsive design */
 @media (max-width: 768px) {
     .mystress-content {
-        padding: 15px;
+        padding: 10px;
+        gap: 10px;
+        min-height: calc(100vh - 180px); /* Adjust for mobile */
+        max-height: calc(100vh - 180px);
     }
     
     .date-navigation {
@@ -228,18 +408,96 @@
         padding: 6px 15px;
         font-size: 0.8rem;
     }
+    
+    .chart-container {
+        padding: 10px;
+        margin: 0;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+    
+    .chart-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .chart-controls {
+        gap: 10px;
+        align-self: stretch;
+        justify-content: space-between;
+    }
+    
+    .control-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .stress-chart {
+        height: min(300px, calc(100vh - 350px)); /* Smaller on mobile */
+        min-height: 200px;
+        margin: 10px 0;
+    }
+    
+    .chart-info {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+    
+    .session-stats {
+        gap: 15px;
+        width: 100%;
+        justify-content: space-around;
+    }
+    
+    .current-reading .value {
+        font-size: 1.3rem;
+    }
 }
 </style>
 
 <script>
+// Add Plotly.js library
+const plotlyScript = document.createElement('script');
+plotlyScript.src = 'https://cdn.plot.ly/plotly-latest.min.js';
+document.head.appendChild(plotlyScript);
+
 // Global variables
 let currentDate = new Date();
 let currentPeriod = 'day';
+
+// Chart variables
+let stressTimeData = [];
+let stressValueData = [];
+let sessionStartTime = Date.now();
+let sessionStats = {
+    average: 0,
+    peak: 0,
+    current: 0,
+    count: 0,
+    sum: 0
+};
+
+// WebSocket connection
+let stressSocket = null;
+
+// Pause state
+let isPaused = false;
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     updateDateDisplay();
     initializeEventListeners();
+    initializePauseButton();
+    initializeStressChart();
+    connectToStressMonitor();
 });
 
 // Update the date display text
@@ -350,7 +608,8 @@ function navigateDate(increment) {
     }
     
     updateDateDisplay();
-    // Here you would typically reload the chart data
+    // Reset stress session when date changes
+    resetStressSession();
     console.log('Date changed to:', currentDate, 'Period:', currentPeriod);
 }
 
@@ -365,7 +624,8 @@ function changePeriod(newPeriod) {
     currentPeriod = newPeriod;
     updateDateDisplay();
     
-    // Here you would typically reload the chart data for the new period
+    // Reset stress session when period changes
+    resetStressSession();
     console.log('Period changed to:', currentPeriod);
 }
 
@@ -396,7 +656,8 @@ function confirmDateSelection() {
         updateDateDisplay();
         hideDatePicker();
         
-        // Here you would typically reload the chart data
+        // Reset stress session when date is manually selected
+        resetStressSession();
         console.log('Date selected:', currentDate);
     }
 }
@@ -411,4 +672,254 @@ document.addEventListener('keydown', function(e) {
         hideDatePicker();
     }
 });
+
+// Initialize stress monitoring chart
+function initializeStressChart() {
+    plotlyScript.onload = function() {
+        const plotData = [{
+            x: stressTimeData,
+            y: stressValueData,
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {color: '#8B5CF6', width: 3},
+            marker: {size: 6, color: '#8B5CF6'},
+            name: 'Stress Level',
+            fill: 'tonexty',
+            fillcolor: 'rgba(139, 92, 246, 0.1)'
+        }];
+
+        const layout = {
+            title: {
+                text: 'Real-time Stress Monitoring',
+                font: {size: 16, color: '#333'}
+            },
+            xaxis: {
+                title: 'Time (seconds)',
+                gridcolor: '#f0f0f0',
+                showgrid: true
+            },
+            yaxis: {
+                title: 'Stress Level',
+                range: [0, 100],
+                gridcolor: '#f0f0f0',
+                showgrid: true
+            },
+            showlegend: false,
+            margin: {l: 50, r: 30, t: 50, b: 50},
+            plot_bgcolor: 'white',
+            paper_bgcolor: 'white'
+        };
+
+        Plotly.newPlot('stress-chart', plotData, layout, {responsive: true});
+    };
+}
+
+// Connect to stress monitoring WebSocket
+function connectToStressMonitor() {
+    const statusElement = document.getElementById('connection-status');
+    
+    try {
+        // Use the same WebSocket server as the RandomNumGenerator
+        stressSocket = new WebSocket('ws://127.0.0.1:8000');
+        
+        stressSocket.onopen = function() {
+            console.log('Connected to stress monitoring server.');
+            statusElement.textContent = 'Connected';
+            statusElement.className = 'status connected';
+            updateSessionDuration();
+        };
+
+        stressSocket.onmessage = function(event) {
+            console.log('Stress data received:', event.data);
+            
+            // Skip processing if paused
+            if (isPaused) {
+                console.log('Data collection paused - ignoring incoming data');
+                return;
+            }
+            
+            // Parse the data (string of numbers separated by spaces)
+            const numbers = event.data.split(' ').map(num => parseFloat(num)).filter(num => !isNaN(num));
+            
+            if (numbers.length > 0) {
+                // Process each stress level reading
+                numbers.forEach(value => {
+                    addStressDataPoint(value);
+                });
+                
+                updateStressChart();
+                updateStressStats();
+            }
+        };
+
+        stressSocket.onerror = function(error) {
+            console.error('WebSocket error:', error);
+            statusElement.textContent = 'Connection Error';
+            statusElement.className = 'status disconnected';
+        };
+
+        stressSocket.onclose = function() {
+            console.log('Stress monitoring connection closed.');
+            statusElement.textContent = 'Disconnected';
+            statusElement.className = 'status disconnected';
+            
+            // Attempt to reconnect after 5 seconds
+            setTimeout(connectToStressMonitor, 5000);
+        };
+        
+    } catch (error) {
+        console.error('Failed to connect to stress monitor:', error);
+        statusElement.textContent = 'Connection Failed';
+        statusElement.className = 'status disconnected';
+    }
+}
+
+// Add a new stress data point
+function addStressDataPoint(value) {
+    const currentTime = (Date.now() - sessionStartTime) / 1000; // Convert to seconds
+    
+    stressTimeData.push(currentTime);
+    stressValueData.push(value);
+    
+    // Update session stats
+    sessionStats.current = value;
+    sessionStats.count++;
+    sessionStats.sum += value;
+    sessionStats.average = sessionStats.sum / sessionStats.count;
+    sessionStats.peak = Math.max(sessionStats.peak, value);
+    
+    // Keep only last 100 data points for performance
+    if (stressTimeData.length > 100) {
+        stressTimeData.shift();
+        stressValueData.shift();
+    }
+}
+
+// Update the stress chart
+function updateStressChart() {
+    if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+        Plotly.update('stress-chart', {
+            x: [stressTimeData],
+            y: [stressValueData]
+        });
+        
+        // Auto-scale the x-axis to show recent data
+        if (stressTimeData.length > 20) {
+            const recentTimes = stressTimeData.slice(-50);
+            Plotly.relayout('stress-chart', {
+                'xaxis.range': [recentTimes[0], recentTimes[recentTimes.length - 1]]
+            });
+        }
+    }
+}
+
+// Update stress statistics display
+function updateStressStats() {
+    document.getElementById('current-stress-level').textContent = sessionStats.current.toFixed(1);
+    document.getElementById('avg-stress').textContent = sessionStats.average.toFixed(1);
+    document.getElementById('peak-stress').textContent = sessionStats.peak.toFixed(1);
+}
+
+// Update session duration
+function updateSessionDuration() {
+    // Only update duration if not paused
+    if (!isPaused) {
+        const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
+        const minutes = Math.floor(duration / 60);
+        const seconds = duration % 60;
+        
+        document.getElementById('session-duration').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // Update every second if connected
+    if (stressSocket && stressSocket.readyState === WebSocket.OPEN) {
+        setTimeout(updateSessionDuration, 1000);
+    }
+}
+
+// Reset session data when period changes
+function resetStressSession() {
+    stressTimeData = [];
+    stressValueData = [];
+    sessionStartTime = Date.now();
+    sessionStats = {
+        average: 0,
+        peak: 0,
+        current: 0,
+        count: 0,
+        sum: 0
+    };
+    
+    // Clear the chart
+    if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+        Plotly.update('stress-chart', {
+            x: [[]],
+            y: [[]]
+        });
+    }
+    
+    // Reset stats display
+    document.getElementById('current-stress-level').textContent = '--';
+    document.getElementById('avg-stress').textContent = '--';
+    document.getElementById('peak-stress').textContent = '--';
+    document.getElementById('session-duration').textContent = '00:00';
+    
+    // Reset pause state
+    isPaused = false;
+    updatePauseButton();
+}
+
+// Initialize pause button
+function initializePauseButton() {
+    const pauseBtn = document.getElementById('pause-resume-btn');
+    pauseBtn.addEventListener('click', togglePause);
+    updatePauseButton();
+}
+
+// Toggle pause/resume state
+function togglePause() {
+    isPaused = !isPaused;
+    updatePauseButton();
+    
+    if (isPaused) {
+        console.log('Data collection paused');
+        // Update chart title to show paused state
+        if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+            Plotly.relayout('stress-chart', {
+                'title.text': 'Real-time Stress Monitoring (PAUSED)'
+            });
+        }
+    } else {
+        console.log('Data collection resumed');
+        // Reset session start time to account for pause duration
+        const currentTime = Date.now();
+        const pauseDuration = currentTime - sessionStartTime - (stressTimeData.length * 1000); // Approximate
+        sessionStartTime = currentTime - (stressTimeData.length * 1000);
+        
+        // Update chart title to show resumed state
+        if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+            Plotly.relayout('stress-chart', {
+                'title.text': 'Real-time Stress Monitoring'
+            });
+        }
+    }
+}
+
+// Update pause button appearance and text
+function updatePauseButton() {
+    const pauseBtn = document.getElementById('pause-resume-btn');
+    const btnIcon = pauseBtn.querySelector('.btn-icon');
+    const btnText = pauseBtn.querySelector('.btn-text');
+    
+    if (isPaused) {
+        pauseBtn.classList.add('paused');
+        btnIcon.textContent = '▶️';
+        btnText.textContent = 'Resume';
+    } else {
+        pauseBtn.classList.remove('paused');
+        btnIcon.textContent = '⏸️';
+        btnText.textContent = 'Pause';
+    }
+}
 </script>
