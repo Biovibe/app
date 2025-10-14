@@ -1,4 +1,4 @@
-<div class="mystress-content">
+n<div class="mystress-content">
     <!-- Tab Navigation -->
     <div class="tab-navigation">
         <button class="tab-btn active" data-tab="live" id="tab-live">Live Session</button>
@@ -1181,7 +1181,7 @@ function initializeStressChart() {
             },
             yaxis: {
                 title: 'Stress Level',
-                range: [0, 100],
+                autorange: true,
                 gridcolor: '#f0f0f0',
                 showgrid: true
             },
@@ -1201,7 +1201,7 @@ function connectToStressMonitor() {
     
     try {
         // Use the same WebSocket server as the RandomNumGenerator
-        stressSocket = new WebSocket('ws://127.0.0.1:8000');
+        stressSocket = new WebSocket('ws://192.168.0.24:8000');
         
         stressSocket.onopen = function() {
             console.log('Connected to stress monitoring server.');
