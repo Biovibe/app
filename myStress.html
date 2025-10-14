@@ -1223,13 +1223,15 @@ function connectToStressMonitor() {
             const numbers = event.data.split(' ').map(num => parseFloat(num)).filter(num => !isNaN(num));
             
             if (numbers.length > 0) {
-                // Process each stress level reading
-                numbers.forEach(value => {
-                    addStressDataPoint(value);
+                // Process each stress level reading with time spacing
+                numbers.forEach((value, index) => {
+                    // Add time offset so points don't stack vertically
+                    setTimeout(() => {
+                        addStressDataPoint(value);
+                        updateStressChart();
+                        updateStressStats();
+                    }, index * 50); // Spread points 50ms apart
                 });
-                
-                updateStressChart();
-                updateStressStats();
             }
         };
 
