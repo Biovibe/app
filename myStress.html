@@ -1,62 +1,118 @@
 <div class="mystress-content">
-    <!-- Date Navigation -->
-    <div class="date-navigation">
-        <button class="nav-arrow" id="prev-date">&#8249;</button>
-        <div class="date-display" id="date-display">
-            <span class="current-date" id="current-date">Today</span>
-            <span class="dropdown-arrow">&#9662;</span>
-        </div>
-        <button class="nav-arrow" id="next-date">&#8250;</button>
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+        <button class="tab-btn active" data-tab="live" id="tab-live">Live Session</button>
+        <button class="tab-btn" data-tab="saved" id="tab-saved">Saved Sessions</button>
     </div>
 
-    <!-- Date Picker Modal -->
-    <div class="date-picker-modal" id="date-picker-modal">
-        <div class="date-picker-content">
-            <input type="date" id="date-picker" />
-            <div class="date-picker-buttons">
-                <button id="date-picker-cancel">Cancel</button>
-                <button id="date-picker-confirm">Select</button>
+    <!-- Live Session Tab -->
+    <div class="tab-content active" id="live-tab">
+        <!-- Date Navigation -->
+        <div class="date-navigation">
+            <button class="nav-arrow" id="prev-date">&#8249;</button>
+            <div class="date-display" id="date-display">
+                <span class="current-date" id="current-date">Today</span>
+                <span class="dropdown-arrow">&#9662;</span>
+            </div>
+            <button class="nav-arrow" id="next-date">&#8250;</button>
+        </div>
+
+        <!-- Date Picker Modal -->
+        <div class="date-picker-modal" id="date-picker-modal">
+            <div class="date-picker-content">
+                <input type="date" id="date-picker" />
+                <div class="date-picker-buttons">
+                    <button id="date-picker-cancel">Cancel</button>
+                    <button id="date-picker-confirm">Select</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Period Selector -->
+        <div class="time-period-selector">
+            <button class="period-btn active" data-period="day" id="period-day">Day</button>
+            <button class="period-btn" data-period="week" id="period-week">Week</button>
+            <button class="period-btn" data-period="month" id="period-month">Month</button>
+        </div>
+
+        <!-- Stress Level Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3>Stress Level Monitoring</h3>
+                <div class="chart-controls">
+                    <button class="control-btn pause-btn" id="pause-resume-btn">
+                        <span class="btn-icon">⏸️</span>
+                        <span class="btn-text">Pause</span>
+                    </button>
+                    <button class="control-btn save-btn" id="save-session-btn">
+                        <span class="btn-icon">💾</span>
+                        <span class="btn-text">Save Session</span>
+                    </button>
+                    <div id="connection-status" class="status disconnected">Disconnected</div>
+                </div>
+            </div>
+            <div id="stress-chart" class="stress-chart"></div>
+            <div class="chart-info">
+                <div class="current-reading">
+                    <span class="label">Current Level:</span>
+                    <span id="current-stress-level" class="value">--</span>
+                </div>
+                <div class="session-stats">
+                    <div class="stat">
+                        <span class="stat-label">Average:</span>
+                        <span id="avg-stress" class="stat-value">--</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Peak:</span>
+                        <span id="peak-stress" class="stat-value">--</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Duration:</span>
+                        <span id="session-duration" class="stat-value">00:00</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Time Period Selector -->
-    <div class="time-period-selector">
-        <button class="period-btn active" data-period="day" id="period-day">Day</button>
-        <button class="period-btn" data-period="week" id="period-week">Week</button>
-        <button class="period-btn" data-period="month" id="period-month">Month</button>
-    </div>
-
-    <!-- Stress Level Chart -->
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3>Stress Level Monitoring</h3>
-            <div class="chart-controls">
-                <button class="control-btn pause-btn" id="pause-resume-btn">
-                    <span class="btn-icon">⏸️</span>
-                    <span class="btn-text">Pause</span>
+    <!-- Saved Sessions Tab -->
+    <div class="tab-content" id="saved-tab">
+        <div class="saved-sessions-container">
+            <div class="saved-sessions-header">
+                <h3>Your Saved Sessions</h3>
+                <button class="control-btn clear-all-btn" id="clear-all-sessions">
+                    <span class="btn-icon">🗑️</span>
+                    <span class="btn-text">Clear All</span>
                 </button>
-                <div id="connection-status" class="status disconnected">Disconnected</div>
             </div>
-        </div>
-        <div id="stress-chart" class="stress-chart"></div>
-        <div class="chart-info">
-            <div class="current-reading">
-                <span class="label">Current Level:</span>
-                <span id="current-stress-level" class="value">--</span>
+            <div id="saved-sessions-list" class="saved-sessions-list">
+                <!-- Sessions will be populated here -->
             </div>
-            <div class="session-stats">
-                <div class="stat">
-                    <span class="stat-label">Average:</span>
-                    <span id="avg-stress" class="stat-value">--</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Peak:</span>
-                    <span id="peak-stress" class="stat-value">--</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Duration:</span>
-                    <span id="session-duration" class="stat-value">00:00</span>
+            <div class="session-detail-view" id="session-detail-view" style="display: none;">
+                <div class="session-detail-content">
+                    <div class="session-detail-header">
+                        <h3 id="session-detail-title">Session Details</h3>
+                        <button class="close-detail-btn" id="close-detail-btn">✕</button>
+                    </div>
+                    <div class="session-detail-stats">
+                        <div class="detail-stat">
+                            <span class="detail-label">Date:</span>
+                            <span id="detail-date" class="detail-value">--</span>
+                        </div>
+                        <div class="detail-stat">
+                            <span class="detail-label">Duration:</span>
+                            <span id="detail-duration" class="detail-value">--</span>
+                        </div>
+                        <div class="detail-stat">
+                            <span class="detail-label">Average:</span>
+                            <span id="detail-average" class="detail-value">--</span>
+                        </div>
+                        <div class="detail-stat">
+                            <span class="detail-label">Peak:</span>
+                            <span id="detail-peak" class="detail-value">--</span>
+                        </div>
+                    </div>
+                    <div id="saved-session-chart" class="stress-chart"></div>
                 </div>
             </div>
         </div>
@@ -74,6 +130,50 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+/* Tab Navigation Styles */
+.tab-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+}
+
+.tab-btn {
+    padding: 10px 30px;
+    border: none;
+    background: var(--white);
+    color: var(--dark-grey);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.tab-btn.active {
+    background: var(--purple);
+    color: var(--white);
+    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+}
+
+.tab-btn:hover:not(.active) {
+    background: var(--greyish-purple);
+}
+
+/* Tab Content Styles */
+.tab-content {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    min-height: 0;
+}
+
+.tab-content.active {
+    display: flex;
 }
 
 .date-navigation {
@@ -210,6 +310,30 @@
 
 .pause-btn.paused:hover {
     background: #45a049;
+}
+
+.save-btn {
+    background: #4CAF50;
+    color: var(--white);
+}
+
+.save-btn:hover {
+    background: #45a049;
+}
+
+.save-btn:disabled {
+    background: var(--light-grey);
+    color: var(--dark-grey);
+    cursor: not-allowed;
+}
+
+.clear-all-btn {
+    background: #f44336;
+    color: var(--white);
+}
+
+.clear-all-btn:hover {
+    background: #d32f2f;
 }
 
 .btn-icon {
@@ -387,6 +511,257 @@
     color: var(--purple);
 }
 
+/* Saved Sessions Styles */
+.saved-sessions-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 0;
+}
+
+.saved-sessions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.saved-sessions-header h3 {
+    margin: 0;
+    color: var(--black);
+    font-size: 1.4rem;
+}
+
+.saved-sessions-list {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.session-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.session-card:hover {
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+    border-color: var(--purple);
+    transform: translateY(-2px);
+}
+
+.session-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 10px;
+}
+
+.session-card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--black);
+    margin: 0;
+}
+
+.session-card-date {
+    font-size: 0.85rem;
+    color: var(--dark-grey);
+    margin-top: 5px;
+}
+
+.session-card-delete {
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.session-card-delete:hover {
+    background: #d32f2f;
+    transform: scale(1.1);
+}
+
+.session-card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.session-card-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.session-card-stat-label {
+    font-size: 0.75rem;
+    color: var(--dark-grey);
+    text-transform: uppercase;
+}
+
+.session-card-stat-value {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--purple);
+}
+
+.empty-sessions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--dark-grey);
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.empty-sessions-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-sessions-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.empty-sessions-subtext {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Session Detail View */
+.session-detail-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+}
+
+.session-detail-content {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 25px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.session-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--light-grey);
+}
+
+.session-detail-header h3 {
+    margin: 0;
+    color: var(--black);
+    font-size: 1.4rem;
+}
+
+.close-detail-btn {
+    background: var(--light-grey);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: var(--dark-grey);
+}
+
+.close-detail-btn:hover {
+    background: var(--greyish-purple);
+    color: var(--purple);
+    transform: rotate(90deg);
+}
+
+.session-detail-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.detail-stat {
+    background: var(--light-lavender);
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    color: var(--dark-grey);
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.detail-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--purple);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .mystress-content {
@@ -460,6 +835,54 @@
     .current-reading .value {
         font-size: 1.3rem;
     }
+    
+    /* Tab styles for mobile */
+    .tab-navigation {
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+    
+    .tab-btn {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+    
+    /* Saved sessions for mobile */
+    .saved-sessions-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .saved-sessions-header {
+        padding: 12px;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .saved-sessions-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .session-card-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .session-detail-content {
+        padding: 15px;
+        max-height: 85vh;
+    }
+    
+    .session-detail-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .session-detail-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    #saved-session-chart {
+        height: 250px !important;
+    }
 }
 </style>
 
@@ -491,13 +914,21 @@ let stressSocket = null;
 // Pause state
 let isPaused = false;
 
+// Saved sessions storage
+let savedSessions = [];
+let currentTab = 'live';
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
+    loadSavedSessions();
     updateDateDisplay();
     initializeEventListeners();
+    initializeTabListeners();
     initializePauseButton();
+    initializeSaveButton();
     initializeStressChart();
     connectToStressMonitor();
+    renderSavedSessions();
 });
 
 // Update the date display text
@@ -595,6 +1026,56 @@ function initializeEventListeners() {
             hideDatePicker();
         }
     });
+}
+
+// Initialize tab listeners
+function initializeTabListeners() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            switchTab(this.dataset.tab);
+        });
+    });
+    
+    // Close detail view button
+    document.getElementById('close-detail-btn').addEventListener('click', function() {
+        closeSessionDetail();
+    });
+    
+    // Clear all sessions button
+    document.getElementById('clear-all-sessions').addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete all saved sessions? This action cannot be undone.')) {
+            clearAllSessions();
+        }
+    });
+    
+    // Close detail view when clicking outside
+    document.getElementById('session-detail-view').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSessionDetail();
+        }
+    });
+}
+
+// Switch between tabs
+function switchTab(tabName) {
+    currentTab = tabName;
+    
+    // Update active tab button
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById('tab-' + tabName).classList.add('active');
+    
+    // Show appropriate content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(tabName + '-tab').classList.add('active');
+    
+    // Refresh saved sessions list when switching to saved tab
+    if (tabName === 'saved') {
+        renderSavedSessions();
+    }
 }
 
 // Navigate date by increment based on current period
@@ -793,6 +1274,9 @@ function addStressDataPoint(value) {
         stressTimeData.shift();
         stressValueData.shift();
     }
+    
+    // Update save button state
+    updateSaveButtonState();
 }
 
 // Update the stress chart
@@ -922,4 +1406,241 @@ function updatePauseButton() {
         btnText.textContent = 'Pause';
     }
 }
+
+// Initialize save button
+function initializeSaveButton() {
+    const saveBtn = document.getElementById('save-session-btn');
+    saveBtn.addEventListener('click', saveCurrentSession);
+    updateSaveButtonState();
+}
+
+// Update save button state
+function updateSaveButtonState() {
+    const saveBtn = document.getElementById('save-session-btn');
+    if (stressTimeData.length === 0) {
+        saveBtn.disabled = true;
+    } else {
+        saveBtn.disabled = false;
+    }
+}
+
+// Save current session
+function saveCurrentSession() {
+    if (stressTimeData.length === 0) {
+        alert('No data to save. Start monitoring to record a session.');
+        return;
+    }
+    
+    const session = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        dateFormatted: new Date().toLocaleString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }),
+        duration: Math.floor((Date.now() - sessionStartTime) / 1000),
+        timeData: [...stressTimeData],
+        valueData: [...stressValueData],
+        stats: {
+            average: sessionStats.average,
+            peak: sessionStats.peak,
+            count: sessionStats.count
+        }
+    };
+    
+    savedSessions.unshift(session); // Add to beginning of array
+    saveSessions();
+    
+    // Show success message
+    alert('Session saved successfully!');
+    
+    // Switch to saved sessions tab
+    switchTab('saved');
+}
+
+// Load saved sessions from localStorage
+function loadSavedSessions() {
+    try {
+        const stored = localStorage.getItem('stressSessions');
+        if (stored) {
+            savedSessions = JSON.parse(stored);
+        }
+    } catch (error) {
+        console.error('Error loading saved sessions:', error);
+        savedSessions = [];
+    }
+}
+
+// Save sessions to localStorage
+function saveSessions() {
+    try {
+        localStorage.setItem('stressSessions', JSON.stringify(savedSessions));
+    } catch (error) {
+        console.error('Error saving sessions:', error);
+        alert('Failed to save session. Storage may be full.');
+    }
+}
+
+// Render saved sessions list
+function renderSavedSessions() {
+    const listContainer = document.getElementById('saved-sessions-list');
+    
+    if (savedSessions.length === 0) {
+        listContainer.innerHTML = `
+            <div class="empty-sessions">
+                <div class="empty-sessions-icon">📊</div>
+                <div class="empty-sessions-text">No Saved Sessions</div>
+                <div class="empty-sessions-subtext">Start a monitoring session and click "Save Session" to keep it for later review.</div>
+            </div>
+        `;
+        return;
+    }
+    
+    listContainer.innerHTML = '';
+    savedSessions.forEach((session, index) => {
+        const card = createSessionCard(session, index);
+        listContainer.appendChild(card);
+    });
+}
+
+// Create a session card element
+function createSessionCard(session, index) {
+    const card = document.createElement('div');
+    card.className = 'session-card';
+    
+    const duration = formatDuration(session.duration);
+    
+    card.innerHTML = `
+        <div class="session-card-header">
+            <div>
+                <div class="session-card-title">Session ${savedSessions.length - index}</div>
+                <div class="session-card-date">${session.dateFormatted}</div>
+            </div>
+            <button class="session-card-delete" onclick="deleteSession(${session.id}); event.stopPropagation();">✕</button>
+        </div>
+        <div class="session-card-stats">
+            <div class="session-card-stat">
+                <div class="session-card-stat-label">Duration</div>
+                <div class="session-card-stat-value">${duration}</div>
+            </div>
+            <div class="session-card-stat">
+                <div class="session-card-stat-label">Avg Stress</div>
+                <div class="session-card-stat-value">${session.stats.average.toFixed(1)}</div>
+            </div>
+            <div class="session-card-stat">
+                <div class="session-card-stat-label">Peak Stress</div>
+                <div class="session-card-stat-value">${session.stats.peak.toFixed(1)}</div>
+            </div>
+            <div class="session-card-stat">
+                <div class="session-card-stat-label">Data Points</div>
+                <div class="session-card-stat-value">${session.stats.count}</div>
+            </div>
+        </div>
+    `;
+    
+    card.addEventListener('click', function() {
+        viewSessionDetail(session);
+    });
+    
+    return card;
+}
+
+// Format duration in seconds to MM:SS
+function formatDuration(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Delete a session
+function deleteSession(sessionId) {
+    if (confirm('Are you sure you want to delete this session?')) {
+        savedSessions = savedSessions.filter(s => s.id !== sessionId);
+        saveSessions();
+        renderSavedSessions();
+    }
+}
+
+// Clear all sessions
+function clearAllSessions() {
+    savedSessions = [];
+    saveSessions();
+    renderSavedSessions();
+}
+
+// View session detail
+function viewSessionDetail(session) {
+    const detailView = document.getElementById('session-detail-view');
+    
+    // Update stats
+    document.getElementById('detail-date').textContent = session.dateFormatted;
+    document.getElementById('detail-duration').textContent = formatDuration(session.duration);
+    document.getElementById('detail-average').textContent = session.stats.average.toFixed(1);
+    document.getElementById('detail-peak').textContent = session.stats.peak.toFixed(1);
+    
+    // Show the modal
+    detailView.style.display = 'flex';
+    
+    // Create chart container if it doesn't exist properly
+    const chartContainer = document.getElementById('saved-session-chart');
+    
+    // Wait for Plotly to be loaded
+    if (typeof Plotly !== 'undefined') {
+        renderSessionChart(session);
+    } else {
+        plotlyScript.onload = function() {
+            renderSessionChart(session);
+        };
+    }
+}
+
+// Render session chart
+function renderSessionChart(session) {
+    const plotData = [{
+        x: session.timeData,
+        y: session.valueData,
+        type: 'scatter',
+        mode: 'lines+markers',
+        line: {color: '#8B5CF6', width: 3},
+        marker: {size: 6, color: '#8B5CF6'},
+        name: 'Stress Level',
+        fill: 'tonexty',
+        fillcolor: 'rgba(139, 92, 246, 0.1)'
+    }];
+
+    const layout = {
+        title: {
+            text: 'Session Data',
+            font: {size: 16, color: '#333'}
+        },
+        xaxis: {
+            title: 'Time (seconds)',
+            gridcolor: '#f0f0f0',
+            showgrid: true
+        },
+        yaxis: {
+            title: 'Stress Level',
+            range: [0, 100],
+            gridcolor: '#f0f0f0',
+            showgrid: true
+        },
+        showlegend: false,
+        margin: {l: 50, r: 30, t: 50, b: 50},
+        plot_bgcolor: 'white',
+        paper_bgcolor: 'white'
+    };
+
+    Plotly.newPlot('saved-session-chart', plotData, layout, {responsive: true});
+}
+
+// Close session detail view
+function closeSessionDetail() {
+    const detailView = document.getElementById('session-detail-view');
+    detailView.style.display = 'none';
+}
+
 </script>
