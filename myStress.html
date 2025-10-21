@@ -120,13 +120,19 @@ n<div class="mystress-content">
 </div>
 
 <style>
+.mystress-content * {
+    box-sizing: border-box;
+}
+
 .mystress-content {
     padding: 15px;
     background: var(--light-lavender);
-    min-height: calc(100vh - 200px); /* Account for header and footer */
-    max-height: calc(100vh - 200px); /* Prevent overflow */
-    overflow-y: auto; /* Allow scrolling if needed */
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 100%;
     box-sizing: border-box;
+    height: 0;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -767,8 +773,6 @@ n<div class="mystress-content">
     .mystress-content {
         padding: 10px;
         gap: 10px;
-        min-height: calc(100vh - 180px); /* Adjust for mobile */
-        max-height: calc(100vh - 180px);
     }
     
     .date-navigation {
@@ -1201,7 +1205,8 @@ function connectToStressMonitor() {
     
     try {
         // Use the same WebSocket server as the RandomNumGenerator
-        stressSocket = new WebSocket('ws://192.168.0.24:8000');
+        // stressSocket = new WebSocket('ws://192.168.0.24:8000');
+        stressSocket = new WebSocket('ws://127.0.0.1:8000:8000');
         
         stressSocket.onopen = function() {
             console.log('Connected to stress monitoring server.');

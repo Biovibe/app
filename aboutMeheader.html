@@ -1,11 +1,11 @@
-<div class="journal-profile-header">
+<div class="aboutme-profile-header">
     <div class="profile-content">
-        <h1 class="journal-title">Journal</h1>
+        <h1 class="aboutme-title">About Me</h1>
     </div>
 </div>
 
 <style>
-.journal-profile-header {
+.aboutme-profile-header {
     background: linear-gradient(180deg, #4a148c 0%, #6a1b9a 25%, #8e24aa 50%, #ab47bc 75%, #ce93d8 100%);
     background-image: 
         url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><defs><linearGradient id="mountain1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23311b92;stop-opacity:0.9" /><stop offset="100%" style="stop-color:%23512da8;stop-opacity:0.7" /></linearGradient><linearGradient id="mountain2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23512da8;stop-opacity:0.8" /><stop offset="100%" style="stop-color:%23673ab7;stop-opacity:0.6" /></linearGradient><linearGradient id="mountain3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23673ab7;stop-opacity:0.7" /><stop offset="100%" style="stop-color:%237986cb;stop-opacity:0.5" /></linearGradient></defs><path d="M0,400 L150,250 L300,320 L450,180 L600,280 L750,150 L900,220 L1050,120 L1200,200 L1200,400 Z" fill="url(%23mountain1)"/><path d="M0,400 L200,300 L400,350 L600,220 L800,320 L1000,180 L1200,250 L1200,400 Z" fill="url(%23mountain2)"/><path d="M0,400 L250,350 L500,380 L750,300 L1000,360 L1200,320 L1200,400 Z" fill="url(%23mountain3)"/></svg>'),
@@ -26,50 +26,51 @@
     box-sizing: border-box;
 }
 
-.journal-profile-header .profile-content {
+.profile-content {
     text-align: center;
     z-index: 2;
     position: relative;
 }
 
-.journal-profile-header .journal-title {
-    font-size: 2.5rem !important;
-    font-weight: bold !important;
-    margin: 0 !important;
-    color: white !important;
-    text-shadow: 0 3px 6px rgba(0,0,0,0.4) !important;
-    font-family: Arial, sans-serif !important;
+.aboutme-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: white;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    font-family: Arial, sans-serif;
 }
 
 /* Tablet responsive */
 @media (max-width: 1024px) {
-    .journal-profile-header {
+    .aboutme-profile-header {
         height: 100px;
     }
     
-    .journal-profile-header .journal-title {
-        font-size: 2rem !important;
+    .aboutme-title {
+        font-size: 2rem;
     }
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-    .journal-profile-header {
+    .aboutme-profile-header {
         height: 80px;
     }
     
-    .journal-profile-header .journal-title {
-        font-size: 1.8rem !important;
+    .aboutme-title {
+        font-size: 1.8rem;
     }
 }
 
 @media (max-width: 480px) {
-    .journal-profile-header {
+    .aboutme-profile-header {
         height: 70px;
     }
     
-    .journal-profile-header .journal-title {
-        font-size: 1.5rem !important;
+    .aboutme-title {
+        font-size: 1.5rem;
     }
 }
 </style>
+
