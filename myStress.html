@@ -1,4 +1,4 @@
-n<div class="mystress-content">
+<div class="mystress-content">
     <!-- Tab Navigation -->
     <div class="tab-navigation">
         <button class="tab-btn active" data-tab="live" id="tab-live">Live Session</button>
@@ -188,9 +188,12 @@ n<div class="mystress-content">
     justify-content: space-between;
     gap: 20px;
     max-width: 400px;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
-    flex-shrink: 0; /* Don't shrink this element */
+    flex-shrink: 0;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 .nav-arrow {
@@ -231,7 +234,12 @@ n<div class="mystress-content">
     display: flex;
     justify-content: center;
     gap: 5px;
-    flex-shrink: 0; /* Don't shrink this element */
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 .period-btn {

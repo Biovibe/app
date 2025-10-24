@@ -1,29 +1,1180 @@
 <div class="main-content">
-    <div class="content-placeholder">
-        <p>Additional main content will go here...</p>
+    <!-- Quick Actions Grid -->
+    <div class="dashboard-grid">
+        <!-- My Mood Level Card -->
+        <div class="dashboard-card mood-card">
+            <div class="card-header">
+                <h3>😊 My Mood Level</h3>
+            </div>
+            <div class="card-body">
+                <div class="mood-selector">
+                    <button class="mood-btn" data-mood="very-happy" onclick="selectMood('very-happy', '😄')">😄</button>
+                    <button class="mood-btn" data-mood="happy" onclick="selectMood('happy', '🙂')">🙂</button>
+                    <button class="mood-btn" data-mood="neutral" onclick="selectMood('neutral', '😐')">😐</button>
+                    <button class="mood-btn" data-mood="sad" onclick="selectMood('sad', '🙁')">🙁</button>
+                    <button class="mood-btn" data-mood="very-sad" onclick="selectMood('very-sad', '😢')">😢</button>
+                </div>
+                <div class="mood-display">
+                    <p id="current-mood-text">How are you feeling today?</p>
+                    <p id="current-mood-emoji" class="mood-emoji"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- My EEG Card -->
+        <div class="dashboard-card device-card">
+            <div class="card-header">
+                <h3>🧠 My EEG</h3>
+                <button class="refresh-btn" onclick="refreshDeviceStatus()" title="Refresh">🔄</button>
+            </div>
+            <div class="card-body">
+                <div class="device-status">
+                    <div class="status-item">
+                        <span class="status-label">Status:</span>
+                        <span class="status-value" id="device-status">
+                            <span class="status-indicator" id="status-indicator"></span>
+                            <span id="device-status-text">Checking...</span>
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Connection:</span>
+                        <span class="status-value" id="connection-type">WiFi</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Battery:</span>
+                        <span class="status-value" id="battery-level">
+                            <span class="battery-icon">🔋</span>
+                            <span id="battery-percent">--%</span>
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Last Sync:</span>
+                        <span class="status-value" id="last-sync">Just now</span>
+                    </div>
+                </div>
+                <button class="connect-btn" onclick="connectDevice()">Connect EEG</button>
+            </div>
+        </div>
+
+        <!-- Streak Card -->
+        <div class="dashboard-card streak-card">
+            <div class="card-header">
+                <h3>🔥 Daily Streak</h3>
+            </div>
+            <div class="card-body">
+                <div class="streak-display">
+                    <div class="current-streak">
+                        <span class="streak-icon">🔥</span>
+                        <div class="streak-number" id="current-streak">0</div>
+                        <p class="streak-label">Current Streak</p>
+                    </div>
+                    <div class="streak-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="longest-streak">0</span>
+                            <span class="stat-label">Longest</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="total-days">0</span>
+                            <span class="stat-label">Total Days</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="streak-calendar" id="streak-calendar">
+                    <!-- Last 7 days -->
+                </div>
+                <button class="checkin-btn" id="checkin-btn" onclick="checkInToday()">
+                    <span>✓</span> Check In Today
+                </button>
+                <p class="last-checkin" id="last-checkin-text">Last check-in: Never</p>
+            </div>
+        </div>
+
+        <!-- Reminders Card -->
+        <div class="dashboard-card reminders-card">
+            <div class="card-header">
+                <h3>⏰ Reminders</h3>
+                <button class="add-btn" onclick="showAddReminder()" title="Add Reminder">+</button>
+            </div>
+            <div class="card-body">
+                <div class="reminders-list" id="reminders-list">
+                    <!-- Sample reminders -->
+                    <div class="reminder-item">
+                        <input type="checkbox" class="reminder-checkbox" onchange="toggleReminder(this)">
+                        <div class="reminder-content">
+                            <p class="reminder-text">Take a stress break</p>
+                            <p class="reminder-time">Today, 2:00 PM</p>
+                        </div>
+                        <button class="delete-reminder-btn" onclick="deleteReminder(this)">🗑️</button>
+                    </div>
+                    <div class="reminder-item">
+                        <input type="checkbox" class="reminder-checkbox" onchange="toggleReminder(this)">
+                        <div class="reminder-content">
+                            <p class="reminder-text">Journal entry</p>
+                            <p class="reminder-time">Today, 8:00 PM</p>
+                        </div>
+                        <button class="delete-reminder-btn" onclick="deleteReminder(this)">🗑️</button>
+                    </div>
+                </div>
+                <div class="no-reminders" id="no-reminders" style="display: none;">
+                    <p>No reminders set</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Reminder Modal -->
+    <div class="reminder-modal" id="reminder-modal">
+        <div class="reminder-modal-content">
+            <div class="modal-header">
+                <h3>Add New Reminder</h3>
+                <button class="close-btn" onclick="closeAddReminder()">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="reminder-input" placeholder="Reminder text" maxlength="100">
+                <input type="datetime-local" id="reminder-time" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeAddReminder()">Cancel</button>
+                <button class="btn-save" onclick="saveReminder()">Save</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
 .main-content {
-    padding: 30px;
-    max-width: 800px;
+    padding: 20px;
+    background: var(--light-lavender);
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 0;
+}
+
+.main-content * {
+    box-sizing: border-box;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-.content-placeholder {
-    background: white;
+.dashboard-card {
+    background: var(--white);
     border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    text-align: center;
-    color: #666;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
-/* Mobile responsive */
+.dashboard-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--greyish-purple);
+}
+
+.card-header h3 {
+    margin: 0;
+    color: var(--black);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.refresh-btn, .add-btn {
+    background: var(--greyish-purple);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover, .add-btn:hover {
+    background: var(--purple);
+    transform: scale(1.1) rotate(90deg);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Mood Card Styles */
+.mood-selector {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mood-btn {
+    background: var(--light-grey);
+    border: 3px solid transparent;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mood-btn:hover {
+    transform: scale(1.2);
+    background: var(--greyish-purple);
+}
+
+.mood-btn.selected {
+    border-color: var(--purple);
+    background: var(--greyish-purple);
+    transform: scale(1.15);
+}
+
+.mood-display {
+    text-align: center;
+}
+
+.mood-display #current-mood-text {
+    margin: 0 0 10px 0;
+    color: var(--dark-grey);
+    font-size: 1rem;
+}
+
+.mood-emoji {
+    font-size: 3rem;
+    margin: 10px 0;
+}
+
+/* Device Card Styles */
+.device-status {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: var(--light-grey);
+    border-radius: 8px;
+}
+
+.status-label {
+    font-weight: 600;
+    color: var(--dark-grey);
+}
+
+.status-value {
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-indicator.connected {
+    background: #4caf50;
+    box-shadow: 0 0 5px #4caf50;
+}
+
+.status-indicator.disconnected {
+    background: #f44336;
+}
+
+.status-indicator.checking {
+    background: #ff9800;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.battery-icon {
+    font-size: 1.2rem;
+}
+
+.connect-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--purple);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.connect-btn:hover {
+    background: var(--dark-purple);
+    transform: translateY(-2px);
+}
+
+/* Streak Card Styles */
+.streak-display {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.current-streak {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.streak-icon {
+    font-size: 3rem;
+    animation: flicker 2s infinite;
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.streak-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: var(--purple);
+    line-height: 1;
+}
+
+.streak-label {
+    margin: 0;
+    color: var(--dark-grey);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.streak-stats {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    justify-content: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--black);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--dark-grey);
+}
+
+.streak-calendar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.day-box {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: var(--dark-grey);
+    background: var(--light-grey);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.day-box.checked {
+    background: var(--purple);
+    color: white;
+    border-color: var(--dark-purple);
+}
+
+.day-box.today {
+    border-color: var(--purple);
+    font-weight: bold;
+}
+
+.day-label {
+    font-size: 0.65rem;
+    margin-top: 2px;
+}
+
+.checkin-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--purple);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.checkin-btn:hover {
+    background: var(--dark-purple);
+    transform: translateY(-2px);
+}
+
+.checkin-btn:disabled {
+    background: var(--greyish-purple);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.checkin-btn.checked {
+    background: #4caf50;
+}
+
+.checkin-btn.checked:hover {
+    background: #45a049;
+}
+
+.last-checkin {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--dark-grey);
+    margin: 10px 0 0 0;
+}
+
+/* Reminders Card Styles */
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--light-grey);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.reminder-item:hover {
+    background: var(--greyish-purple);
+}
+
+.reminder-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.reminder-content {
+    flex: 1;
+}
+
+.reminder-text {
+    margin: 0 0 5px 0;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.reminder-time {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--dark-grey);
+}
+
+.reminder-item.completed .reminder-text {
+    text-decoration: line-through;
+    color: var(--dark-grey);
+}
+
+.delete-reminder-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.delete-reminder-btn:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.no-reminders {
+    text-align: center;
+    padding: 30px;
+    color: var(--dark-grey);
+}
+
+/* Reminder Modal */
+.reminder-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.reminder-modal.show {
+    display: flex;
+}
+
+.reminder-modal-content {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--black);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--dark-grey);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: var(--light-grey);
+    color: var(--purple);
+}
+
+.modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-body input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--greyish-purple);
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.modal-body input:focus {
+    border-color: var(--purple);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid var(--light-grey);
+}
+
+.btn-cancel, .btn-save {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel {
+    background: var(--light-grey);
+    color: var(--dark-grey);
+}
+
+.btn-cancel:hover {
+    background: var(--greyish-purple);
+}
+
+.btn-save {
+    background: var(--purple);
+    color: white;
+}
+
+.btn-save:hover {
+    background: var(--dark-purple);
+    transform: translateY(-1px);
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
     .main-content {
-        padding: 20px;
+        padding: 15px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .mood-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+
+    .streak-number {
+        font-size: 3rem;
+    }
+
+    .streak-icon {
+        font-size: 2.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .day-box {
+        width: 32px;
+        height: 32px;
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 10px;
+    }
+
+    .dashboard-card {
+        padding: 15px;
+    }
+
+    .card-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .mood-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+    }
+
+    .modal-body input {
+        font-size: 0.9rem;
+    }
+
+    .streak-number {
+        font-size: 2.5rem;
+    }
+
+    .streak-icon {
+        font-size: 2rem;
+    }
+
+    .streak-stats {
+        gap: 20px;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+    }
+
+    .day-box {
+        width: 28px;
+        height: 28px;
+        font-size: 0.6rem;
+    }
+
+    .streak-calendar {
+        gap: 5px;
     }
 }
 </style>
+
+<script>
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadMoodData();
+    checkDeviceStatus();
+    loadReminders();
+    updateLastSync();
+    loadStreakData();
+    renderStreakCalendar();
+});
+
+// Mood Functions
+function selectMood(mood, emoji) {
+    // Remove selected class from all buttons
+    document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Add selected to clicked button
+    event.target.classList.add('selected');
+    
+    // Update display
+    document.getElementById('current-mood-text').textContent = `You're feeling ${mood.replace('-', ' ')} today`;
+    document.getElementById('current-mood-emoji').textContent = emoji;
+    
+    // Save to localStorage
+    localStorage.setItem('current_mood', mood);
+    localStorage.setItem('current_mood_emoji', emoji);
+    localStorage.setItem('mood_date', new Date().toDateString());
+}
+
+function loadMoodData() {
+    const savedMood = localStorage.getItem('current_mood');
+    const savedEmoji = localStorage.getItem('current_mood_emoji');
+    const savedDate = localStorage.getItem('mood_date');
+    const today = new Date().toDateString();
+    
+    if (savedMood && savedDate === today) {
+        document.getElementById('current-mood-text').textContent = `You're feeling ${savedMood.replace('-', ' ')} today`;
+        document.getElementById('current-mood-emoji').textContent = savedEmoji;
+        
+        // Select the mood button
+        const button = document.querySelector(`[data-mood="${savedMood}"]`);
+        if (button) button.classList.add('selected');
+    }
+}
+
+// Device Functions
+function checkDeviceStatus() {
+    const indicator = document.getElementById('status-indicator');
+    const statusText = document.getElementById('device-status-text');
+    
+    // Simulate checking (in real app, this would check actual device)
+    indicator.className = 'status-indicator checking';
+    statusText.textContent = 'Checking...';
+    
+    setTimeout(() => {
+        const isConnected = Math.random() > 0.5; // Simulate connection status
+        
+        if (isConnected) {
+            indicator.className = 'status-indicator connected';
+            statusText.textContent = 'Connected';
+        } else {
+            indicator.className = 'status-indicator disconnected';
+            statusText.textContent = 'Disconnected';
+        }
+        
+        // Update battery
+        const battery = Math.floor(Math.random() * 40) + 60;
+        document.getElementById('battery-percent').textContent = `${battery}%`;
+    }, 1000);
+}
+
+function refreshDeviceStatus() {
+    checkDeviceStatus();
+    updateLastSync();
+}
+
+function connectDevice() {
+    alert('EEG connection feature coming soon!');
+    checkDeviceStatus();
+}
+
+function updateLastSync() {
+    document.getElementById('last-sync').textContent = 'Just now';
+}
+
+// Reminder Functions
+function showAddReminder() {
+    document.getElementById('reminder-modal').classList.add('show');
+    document.getElementById('reminder-input').focus();
+}
+
+function closeAddReminder() {
+    document.getElementById('reminder-modal').classList.remove('show');
+    document.getElementById('reminder-input').value = '';
+    document.getElementById('reminder-time').value = '';
+}
+
+function saveReminder() {
+    const text = document.getElementById('reminder-input').value.trim();
+    const time = document.getElementById('reminder-time').value;
+    
+    if (!text) {
+        alert('Please enter reminder text');
+        return;
+    }
+    
+    if (!time) {
+        alert('Please select a time');
+        return;
+    }
+    
+    // Create reminder element
+    const remindersList = document.getElementById('reminders-list');
+    const reminderItem = document.createElement('div');
+    reminderItem.className = 'reminder-item';
+    
+    const dateObj = new Date(time);
+    const formattedTime = dateObj.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+    });
+    
+    reminderItem.innerHTML = `
+        <input type="checkbox" class="reminder-checkbox" onchange="toggleReminder(this)">
+        <div class="reminder-content">
+            <p class="reminder-text">${text}</p>
+            <p class="reminder-time">${formattedTime}</p>
+        </div>
+        <button class="delete-reminder-btn" onclick="deleteReminder(this)">🗑️</button>
+    `;
+    
+    remindersList.appendChild(reminderItem);
+    
+    // Save to localStorage
+    saveRemindersToStorage();
+    
+    closeAddReminder();
+}
+
+function toggleReminder(checkbox) {
+    const reminderItem = checkbox.closest('.reminder-item');
+    if (checkbox.checked) {
+        reminderItem.classList.add('completed');
+    } else {
+        reminderItem.classList.remove('completed');
+    }
+    saveRemindersToStorage();
+}
+
+function deleteReminder(button) {
+    if (confirm('Delete this reminder?')) {
+        button.closest('.reminder-item').remove();
+        saveRemindersToStorage();
+        checkNoReminders();
+    }
+}
+
+function loadReminders() {
+    const saved = localStorage.getItem('reminders');
+    if (saved) {
+        document.getElementById('reminders-list').innerHTML = saved;
+    }
+    checkNoReminders();
+}
+
+function saveRemindersToStorage() {
+    const remindersHTML = document.getElementById('reminders-list').innerHTML;
+    localStorage.setItem('reminders', remindersHTML);
+    checkNoReminders();
+}
+
+function checkNoReminders() {
+    const list = document.getElementById('reminders-list');
+    const noReminders = document.getElementById('no-reminders');
+    
+    if (list.children.length === 0) {
+        list.style.display = 'none';
+        noReminders.style.display = 'block';
+    } else {
+        list.style.display = 'flex';
+        noReminders.style.display = 'none';
+    }
+}
+
+// Close modal when clicking outside
+document.getElementById('reminder-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeAddReminder();
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeAddReminder();
+    }
+});
+
+// Streak Functions
+function loadStreakData() {
+    const streakData = getStreakData();
+    
+    // Update display
+    document.getElementById('current-streak').textContent = streakData.currentStreak;
+    document.getElementById('longest-streak').textContent = streakData.longestStreak;
+    document.getElementById('total-days').textContent = streakData.totalDays;
+    
+    // Update last check-in text
+    if (streakData.lastCheckIn) {
+        const lastDate = new Date(streakData.lastCheckIn);
+        const today = new Date();
+        
+        if (isSameDay(lastDate, today)) {
+            document.getElementById('last-checkin-text').textContent = 'Last check-in: Today';
+        } else {
+            document.getElementById('last-checkin-text').textContent = 
+                'Last check-in: ' + lastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+    } else {
+        document.getElementById('last-checkin-text').textContent = 'Last check-in: Never';
+    }
+    
+    // Update button state
+    updateCheckInButton();
+}
+
+function getStreakData() {
+    const data = localStorage.getItem('streak_data');
+    if (data) {
+        return JSON.parse(data);
+    }
+    
+    // Default data
+    return {
+        currentStreak: 0,
+        longestStreak: 0,
+        totalDays: 0,
+        lastCheckIn: null,
+        checkIns: [] // Array of date strings
+    };
+}
+
+function saveStreakData(data) {
+    localStorage.setItem('streak_data', JSON.stringify(data));
+}
+
+function checkInToday() {
+    const streakData = getStreakData();
+    const today = new Date();
+    const todayString = today.toDateString();
+    
+    // Check if already checked in today
+    if (streakData.lastCheckIn && isSameDay(new Date(streakData.lastCheckIn), today)) {
+        return; // Already checked in
+    }
+    
+    // Add today to check-ins
+    if (!streakData.checkIns.includes(todayString)) {
+        streakData.checkIns.push(todayString);
+    }
+    
+    // Calculate streak
+    streakData.currentStreak = calculateCurrentStreak(streakData.checkIns);
+    streakData.totalDays = streakData.checkIns.length;
+    
+    // Update longest streak
+    if (streakData.currentStreak > streakData.longestStreak) {
+        streakData.longestStreak = streakData.currentStreak;
+    }
+    
+    // Update last check-in
+    streakData.lastCheckIn = today.toISOString();
+    
+    // Save data
+    saveStreakData(streakData);
+    
+    // Update UI
+    loadStreakData();
+    renderStreakCalendar();
+    
+    // Show success animation
+    const btn = document.getElementById('checkin-btn');
+    btn.innerHTML = '<span>✓</span> Checked In!';
+    btn.classList.add('checked');
+    
+    // Confetti effect (simple)
+    showConfetti();
+}
+
+function calculateCurrentStreak(checkIns) {
+    if (checkIns.length === 0) return 0;
+    
+    // Sort dates in descending order
+    const sortedDates = checkIns
+        .map(d => new Date(d))
+        .sort((a, b) => b - a);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let streak = 0;
+    let currentDate = new Date(today);
+    
+    for (let i = 0; i < sortedDates.length; i++) {
+        const checkInDate = new Date(sortedDates[i]);
+        checkInDate.setHours(0, 0, 0, 0);
+        
+        if (isSameDay(checkInDate, currentDate)) {
+            streak++;
+            currentDate.setDate(currentDate.getDate() - 1);
+        } else if (checkInDate < currentDate) {
+            break;
+        }
+    }
+    
+    return streak;
+}
+
+function isSameDay(date1, date2) {
+    return date1.toDateString() === date2.toDateString();
+}
+
+function renderStreakCalendar() {
+    const calendar = document.getElementById('streak-calendar');
+    calendar.innerHTML = '';
+    
+    const streakData = getStreakData();
+    const today = new Date();
+    
+    // Show last 7 days
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        
+        const dayBox = document.createElement('div');
+        dayBox.className = 'day-box';
+        
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })[0];
+        const dateNum = date.getDate();
+        
+        // Check if this day was checked in
+        if (streakData.checkIns.includes(date.toDateString())) {
+            dayBox.classList.add('checked');
+            dayBox.innerHTML = `
+                <div>✓</div>
+                <div class="day-label">${dayName}</div>
+            `;
+        } else {
+            dayBox.innerHTML = `
+                <div>${dateNum}</div>
+                <div class="day-label">${dayName}</div>
+            `;
+        }
+        
+        // Highlight today
+        if (isSameDay(date, today)) {
+            dayBox.classList.add('today');
+        }
+        
+        calendar.appendChild(dayBox);
+    }
+}
+
+function updateCheckInButton() {
+    const streakData = getStreakData();
+    const today = new Date();
+    const btn = document.getElementById('checkin-btn');
+    
+    if (streakData.lastCheckIn && isSameDay(new Date(streakData.lastCheckIn), today)) {
+        btn.innerHTML = '<span>✓</span> Checked In!';
+        btn.classList.add('checked');
+        btn.disabled = true;
+    } else {
+        btn.innerHTML = '<span>✓</span> Check In Today';
+        btn.classList.remove('checked');
+        btn.disabled = false;
+    }
+}
+
+function showConfetti() {
+    // Simple confetti animation
+    const streakCard = document.querySelector('.streak-card');
+    const confettiCount = 20;
+    
+    for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'absolute';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '0';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.background = ['#9370db', '#e91e63', '#4caf50', '#ff9800'][Math.floor(Math.random() * 4)];
+        confetti.style.opacity = '1';
+        confetti.style.transition = 'all 1s ease-out';
+        confetti.style.pointerEvents = 'none';
+        confetti.style.borderRadius = '50%';
+        confetti.style.zIndex = '1000';
+        
+        streakCard.style.position = 'relative';
+        streakCard.appendChild(confetti);
+        
+        setTimeout(() => {
+            confetti.style.top = '100%';
+            confetti.style.opacity = '0';
+            confetti.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+        }, 10);
+        
+        setTimeout(() => {
+            confetti.remove();
+        }, 1100);
+    }
+}
+</script>
