@@ -7,12 +7,22 @@
                 <h3>😊 My Mood Level</h3>
             </div>
             <div class="card-body">
-                <div class="mood-selector">
-                    <button class="mood-btn" data-mood="very-happy" onclick="selectMood('very-happy', '😄')">😄</button>
-                    <button class="mood-btn" data-mood="happy" onclick="selectMood('happy', '🙂')">🙂</button>
-                    <button class="mood-btn" data-mood="neutral" onclick="selectMood('neutral', '😐')">😐</button>
-                    <button class="mood-btn" data-mood="sad" onclick="selectMood('sad', '🙁')">🙁</button>
-                    <button class="mood-btn" data-mood="very-sad" onclick="selectMood('very-sad', '😢')">😢</button>
+                <div class="mood-slider-container">
+                    <div class="mood-labels">
+                        <span>😄</span>
+                        <span>🙂</span>
+                        <span>😐</span>
+                        <span>🙁</span>
+                        <span>😢</span>
+                    </div>
+                    <input type="range" min="0" max="4" value="2" step="1" class="mood-slider" id="mood-slider" oninput="updateMoodFromSlider(this.value)">
+                    <div class="mood-value-labels">
+                        <span>Great</span>
+                        <span>Good</span>
+                        <span>Okay</span>
+                        <span>Not Good</span>
+                        <span>Bad</span>
+                    </div>
                 </div>
                 <div class="mood-display">
                     <p id="current-mood-text">How are you feeling today?</p>
@@ -120,6 +130,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- My Sessions Card -->
+        <div class="dashboard-card sessions-card">
+            <div class="card-header">
+                <h3>📊 My Sessions</h3>
+                <button class="refresh-btn" onclick="loadSessions()" title="Refresh">🔄</button>
+            </div>
+            <div class="card-body">
+                <div class="sessions-list" id="sessions-list">
+                    <!-- Sessions will be loaded here -->
+                </div>
+                <div class="no-sessions" id="no-sessions" style="display: none;">
+                    <div class="empty-sessions-icon">📊</div>
+                    <div class="empty-sessions-text">No Sessions Yet</div>
+                    <div class="empty-sessions-subtext">Start monitoring stress levels to create sessions</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Add Reminder Modal -->
@@ -150,7 +178,7 @@
     overflow-x: hidden;
     max-width: 100%;
     box-sizing: border-box;
-    height: 0;
+    min-height: 0;
 }
 
 .main-content * {
@@ -220,36 +248,83 @@
 }
 
 /* Mood Card Styles */
-.mood-selector {
+.mood-slider-container {
     display: flex;
-    justify-content: space-around;
-    gap: 10px;
-    margin-bottom: 15px;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.mood-btn {
-    background: var(--light-grey);
-    border: 3px solid transparent;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 2rem;
+.mood-labels, .mood-value-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 350px;
+}
+
+.mood-labels span, .mood-value-labels span {
+    font-size: 1.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.mood-btn:hover {
+.mood-value-labels span {
+    font-size: 0.75rem;
+    color: var(--dark-grey);
+    font-weight: 500;
+}
+
+.mood-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    max-width: 350px;
+    height: 8px;
+    border-radius: 5px;
+    background: var(--light-grey);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.mood-slider:hover {
+    background: var(--greyish-purple);
+}
+
+.mood-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--purple);
+    cursor: pointer;
+    border: 3px solid var(--white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.mood-slider::-webkit-slider-thumb:hover {
     transform: scale(1.2);
-    background: var(--greyish-purple);
+    background: var(--dark-purple);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.mood-btn.selected {
-    border-color: var(--purple);
-    background: var(--greyish-purple);
-    transform: scale(1.15);
+.mood-slider::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--purple);
+    cursor: pointer;
+    border: 3px solid var(--white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.mood-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    background: var(--dark-purple);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .mood-display {
@@ -499,6 +574,79 @@
     overflow-y: auto;
 }
 
+/* Sessions Card Styles */
+.sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.session-card-item {
+    background: var(--light-grey);
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.session-card-item:hover {
+    background: var(--greyish-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.session-card-item .session-title {
+    font-weight: 600;
+    color: var(--black);
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+}
+
+.session-card-item .session-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--dark-grey);
+}
+
+.session-stats {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+}
+
+.session-stat {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--dark-grey);
+}
+
+.no-sessions {
+    text-align: center;
+    padding: 20px;
+}
+
+.empty-sessions-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.empty-sessions-text {
+    font-weight: 600;
+    color: var(--dark-grey);
+    margin: 5px 0;
+}
+
+.empty-sessions-subtext {
+    font-size: 0.8rem;
+    color: var(--dark-grey);
+}
+
 .reminder-item {
     display: flex;
     align-items: center;
@@ -685,10 +833,16 @@
         gap: 15px;
     }
 
-    .mood-btn {
-        width: 45px;
-        height: 45px;
+    .mood-slider {
+        max-width: 100%;
+    }
+    
+    .mood-labels span {
         font-size: 1.5rem;
+    }
+    
+    .mood-value-labels span {
+        font-size: 0.7rem;
     }
 
     .streak-number {
@@ -723,10 +877,12 @@
         font-size: 1.1rem;
     }
 
-    .mood-btn {
-        width: 40px;
-        height: 40px;
+    .mood-labels span {
         font-size: 1.3rem;
+    }
+    
+    .mood-value-labels span {
+        font-size: 0.65rem;
     }
 
     .modal-body input {
@@ -758,6 +914,15 @@
     .streak-calendar {
         gap: 5px;
     }
+    
+    .session-card-item .session-stats {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .session-stat {
+        font-size: 0.7rem;
+    }
 }
 </style>
 
@@ -770,25 +935,28 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLastSync();
     loadStreakData();
     renderStreakCalendar();
+    loadSessions();
 });
 
 // Mood Functions
-function selectMood(mood, emoji) {
-    // Remove selected class from all buttons
-    document.querySelectorAll('.mood-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+function updateMoodFromSlider(value) {
+    const moods = [
+        { name: 'very happy', emoji: '😄' },
+        { name: 'happy', emoji: '🙂' },
+        { name: 'neutral', emoji: '😐' },
+        { name: 'sad', emoji: '🙁' },
+        { name: 'very sad', emoji: '😢' }
+    ];
     
-    // Add selected to clicked button
-    event.target.classList.add('selected');
+    const mood = moods[value];
     
     // Update display
-    document.getElementById('current-mood-text').textContent = `You're feeling ${mood.replace('-', ' ')} today`;
-    document.getElementById('current-mood-emoji').textContent = emoji;
+    document.getElementById('current-mood-text').textContent = `You're feeling ${mood.name} today`;
+    document.getElementById('current-mood-emoji').textContent = mood.emoji;
     
     // Save to localStorage
-    localStorage.setItem('current_mood', mood);
-    localStorage.setItem('current_mood_emoji', emoji);
+    localStorage.setItem('current_mood', mood.name.replace(' ', '-'));
+    localStorage.setItem('current_mood_emoji', mood.emoji);
     localStorage.setItem('mood_date', new Date().toDateString());
 }
 
@@ -802,9 +970,19 @@ function loadMoodData() {
         document.getElementById('current-mood-text').textContent = `You're feeling ${savedMood.replace('-', ' ')} today`;
         document.getElementById('current-mood-emoji').textContent = savedEmoji;
         
-        // Select the mood button
-        const button = document.querySelector(`[data-mood="${savedMood}"]`);
-        if (button) button.classList.add('selected');
+        // Set slider value
+        const moodMap = {
+            'very-happy': 0,
+            'happy': 1,
+            'neutral': 2,
+            'sad': 3,
+            'very-sad': 4
+        };
+        
+        const slider = document.getElementById('mood-slider');
+        if (slider && moodMap[savedMood] !== undefined) {
+            slider.value = moodMap[savedMood];
+        }
     }
 }
 
@@ -1176,5 +1354,92 @@ function showConfetti() {
             confetti.remove();
         }, 1100);
     }
+}
+
+// Session Functions
+function loadSessions() {
+    try {
+        const stored = localStorage.getItem('stressSessions');
+        const sessions = stored ? JSON.parse(stored) : [];
+        
+        const sessionsList = document.getElementById('sessions-list');
+        const noSessions = document.getElementById('no-sessions');
+        
+        if (sessions.length === 0) {
+            sessionsList.style.display = 'none';
+            noSessions.style.display = 'block';
+            return;
+        }
+        
+        sessionsList.style.display = 'flex';
+        noSessions.style.display = 'none';
+        sessionsList.innerHTML = '';
+        
+        // Show only the first 5 sessions
+        const recentSessions = sessions.slice(0, 5);
+        
+        recentSessions.forEach((session, index) => {
+            const sessionItem = createSessionItem(session, index);
+            sessionsList.appendChild(sessionItem);
+        });
+    } catch (error) {
+        console.error('Error loading sessions:', error);
+    }
+}
+
+function createSessionItem(session, index) {
+    const item = document.createElement('div');
+    item.className = 'session-card-item';
+    
+    // Format date
+    const date = new Date(session.date || session.dateFormatted);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    let dateStr;
+    if (isSameDay(date, today)) {
+        dateStr = 'Today';
+    } else if (isSameDay(date, yesterday)) {
+        dateStr = 'Yesterday';
+    } else {
+        dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    
+    // Format duration
+    const duration = session.duration || 0;
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+    item.innerHTML = `
+        <div class="session-title">Stress Monitoring Session</div>
+        <div class="session-meta">
+            <span>${dateStr}</span>
+            <span>${durationStr}</span>
+        </div>
+        <div class="session-stats">
+            <div class="session-stat">
+                <span>📊</span>
+                <span>Avg: ${session.stats?.average?.toFixed(1) || '0.0'}</span>
+            </div>
+            <div class="session-stat">
+                <span>📈</span>
+                <span>Peak: ${session.stats?.peak?.toFixed(1) || '0.0'}</span>
+            </div>
+            <div class="session-stat">
+                <span>📝</span>
+                <span>${session.stats?.count || 0} readings</span>
+            </div>
+        </div>
+    `;
+    
+    // Add click handler to navigate to myStress page
+    item.addEventListener('click', () => {
+        localStorage.setItem('selectedSession', JSON.stringify(session));
+        window.location.href = 'myStress.html';
+    });
+    
+    return item;
 }
 </script>

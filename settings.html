@@ -79,6 +79,11 @@
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
 }
 
 .back-button-container {
@@ -315,11 +320,14 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
+    .settings-page {
+        padding: 15px;
+    }
+    
     .settings-container {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
     
     .button-group {
         flex-direction: column;
@@ -341,6 +349,24 @@
     .theme-preview {
         width: 50px;
         height: 35px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-page {
+        padding: 10px;
+    }
+    
+    .settings-card, .preview-card {
+        padding: 15px;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .setting-label {
+        font-size: 1rem;
     }
 }
 </style>

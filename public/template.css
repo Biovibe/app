@@ -19,23 +19,27 @@ body {
     width: 100vw;
     height: 100vh;
     margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
+
 main {
     max-width: 1024px;
     background-color: var(--light-lavender);
     font-family: Arial, sans-serif;
-    height: 100%;
-    margin: auto;
+    height: 100vh;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    overflow: hidden;
 }
 header {
     background-color: var(--white);
     display:flex;
     flex-direction: row; 
     align-items:normal; 
-    justify-content:left; 
+    justify-content:left;
+    flex-shrink: 0;
 }
 header > * {
     padding-top: 10px;
@@ -54,6 +58,7 @@ footer {
     justify-content:space-evenly;   /* Centers everything horizontally */
     height: auto;
     padding-top: 40px;
+    flex-shrink: 0;
 }
 footer > * {
     width: calc(100% / 5);
