@@ -159,17 +159,6 @@
 </div>
 
 <style>
-:root {
-    --light-lavender: #e6e6fa;
-    --greyish-purple: #d8bfd8;
-    --purple: #9370db;
-    --white: #ffffff;
-    --light-grey: #f8f9ff;
-    --dark-grey: #666666;
-    --black: #000000;
-    --dark-purple: #3e2741;
-}
-
 .relax-content * {
     box-sizing: border-box;
 }
@@ -177,12 +166,13 @@
 .relax-content {
     padding: 20px;
     background: var(--light-lavender);
-    flex: 1;
+    flex: 1 1 0;
     overflow-y: auto;
     overflow-x: hidden;
     max-width: 100%;
     box-sizing: border-box;
     min-height: 0;
+    -webkit-overflow-scrolling: touch;
 }
 
 .welcome-section {

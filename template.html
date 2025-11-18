@@ -3,6 +3,7 @@
 <head>
     <title>paste title here</title>
     <link rel="stylesheet" href="template.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body>
     <main>
@@ -14,5 +15,84 @@
             paste footer here
         </footer>
     </main>
+
+    <!-- Mobile Navigation -->
+    <button class="mobile-nav-toggle" onclick="toggleMobileNav()" aria-label="Toggle Navigation">
+        ☰
+    </button>
+
+    <nav class="mobile-nav-sidebar" id="mobile-nav">
+        <button class="sidebar-close" onclick="closeMobileNav()" aria-label="Close Navigation">
+            ✕
+        </button>
+        <a href="/main" class="mobile-nav-item home">
+            <img src="main.png" alt="Home">
+            <span>Home</span>
+        </a>
+        <a href="/relax" class="mobile-nav-item">
+            <img src="relax.svg" alt="Relax">
+            <span>Relax</span>
+        </a>
+        <a href="/myStress" class="mobile-nav-item">
+            <img src="myStress.svg" alt="My Stress">
+            <span>My Stress</span>
+        </a>
+        <a href="/journal" class="mobile-nav-item">
+            <img src="journal.svg" alt="Journal">
+            <span>Journal</span>
+        </a>
+        <a href="/aboutMe" class="mobile-nav-item">
+            <img src="aboutMe.svg" alt="About Me">
+            <span>About Me</span>
+        </a>
+    </nav>
+
+    <script>
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobile-nav');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            const body = document.body;
+            
+            if (nav.classList.contains('open')) {
+                closeMobileNav();
+            } else {
+                nav.classList.add('open');
+                toggle.classList.add('active');
+                body.classList.add('nav-open');
+                toggle.innerHTML = '✕';
+            }
+        }
+
+        function closeMobileNav() {
+            const nav = document.getElementById('mobile-nav');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            const body = document.body;
+            
+            nav.classList.remove('open');
+            toggle.classList.remove('active');
+            body.classList.remove('nav-open');
+            toggle.innerHTML = '☰';
+        }
+
+        // Close when clicking overlay
+        document.addEventListener('click', function(e) {
+            if (e.target === document.body.querySelector('body::before')) {
+                closeMobileNav();
+            }
+        });
+
+        // Close on overlay click (using actual implementation)
+        document.body.addEventListener('click', function(e) {
+            const nav = document.getElementById('mobile-nav');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            const body = document.body;
+            
+            if (body.classList.contains('nav-open') && 
+                !nav.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                closeMobileNav();
+            }
+        });
+    </script>
 </body>
 </html>

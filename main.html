@@ -2,9 +2,10 @@
     <!-- Quick Actions Grid -->
     <div class="dashboard-grid">
         <!-- My Mood Level Card -->
-        <div class="dashboard-card mood-card">
-            <div class="card-header">
+        <div class="dashboard-card mood-card" data-accordion="mood">
+            <div class="card-header" onclick="toggleAccordion('mood')">
                 <h3>😊 My Mood Level</h3>
+                <span class="accordion-arrow">▼</span>
             </div>
             <div class="card-body">
                 <div class="mood-slider-container">
@@ -32,10 +33,13 @@
         </div>
 
         <!-- My EEG Card -->
-        <div class="dashboard-card device-card">
-            <div class="card-header">
+        <div class="dashboard-card device-card" data-accordion="eeg">
+            <div class="card-header" onclick="toggleAccordion('eeg')">
                 <h3>🧠 My EEG</h3>
-                <button class="refresh-btn" onclick="refreshDeviceStatus()" title="Refresh">🔄</button>
+                <div class="card-header-actions">
+                    <button class="refresh-btn" onclick="event.stopPropagation(); refreshDeviceStatus()" title="Refresh">🔄</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="card-body">
                 <div class="device-status">
@@ -67,9 +71,10 @@
         </div>
 
         <!-- Streak Card -->
-        <div class="dashboard-card streak-card">
-            <div class="card-header">
+        <div class="dashboard-card streak-card" data-accordion="streak">
+            <div class="card-header" onclick="toggleAccordion('streak')">
                 <h3>🔥 Daily Streak</h3>
+                <span class="accordion-arrow">▼</span>
             </div>
             <div class="card-body">
                 <div class="streak-display">
@@ -100,10 +105,13 @@
         </div>
 
         <!-- Reminders Card -->
-        <div class="dashboard-card reminders-card">
-            <div class="card-header">
+        <div class="dashboard-card reminders-card" data-accordion="reminders">
+            <div class="card-header" onclick="toggleAccordion('reminders')">
                 <h3>⏰ Reminders</h3>
-                <button class="add-btn" onclick="showAddReminder()" title="Add Reminder">+</button>
+                <div class="card-header-actions">
+                    <button class="add-btn" onclick="event.stopPropagation(); showAddReminder()" title="Add Reminder">+</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="card-body">
                 <div class="reminders-list" id="reminders-list">
@@ -132,10 +140,13 @@
         </div>
 
         <!-- My Sessions Card -->
-        <div class="dashboard-card sessions-card">
-            <div class="card-header">
+        <div class="dashboard-card sessions-card" data-accordion="sessions">
+            <div class="card-header" onclick="toggleAccordion('sessions')">
                 <h3>📊 My Sessions</h3>
-                <button class="refresh-btn" onclick="loadSessions()" title="Refresh">🔄</button>
+                <div class="card-header-actions">
+                    <button class="refresh-btn" onclick="event.stopPropagation(); loadSessions()" title="Refresh">🔄</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="card-body">
                 <div class="sessions-list" id="sessions-list">
@@ -173,12 +184,13 @@
 .main-content {
     padding: 20px;
     background: var(--light-lavender);
-    flex: 1;
+    flex: 1 1 0;
     overflow-y: auto;
     overflow-x: hidden;
     max-width: 100%;
     box-sizing: border-box;
     min-height: 0;
+    -webkit-overflow-scrolling: touch;
 }
 
 .main-content * {
@@ -220,6 +232,19 @@
     color: var(--black);
     font-size: 1.3rem;
     font-weight: 600;
+}
+
+.card-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.accordion-arrow {
+    display: none;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+    color: var(--purple);
 }
 
 .refresh-btn, .add-btn {
@@ -923,6 +948,56 @@
     .session-stat {
         font-size: 0.7rem;
     }
+
+    /* Accordion styles for mobile */
+    .accordion-arrow {
+        display: block;
+    }
+
+    .card-header {
+        cursor: pointer;
+        user-select: none;
+        margin-bottom: 0;
+        padding-bottom: 15px;
+    }
+
+    .dashboard-card.collapsed .card-header {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .dashboard-card.collapsed .card-body {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+        transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+    }
+
+    .card-body {
+        max-height: 2000px;
+        overflow: visible;
+        transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+        opacity: 1;
+    }
+
+    .dashboard-card.collapsed .accordion-arrow {
+        transform: rotate(-90deg);
+    }
+
+    .dashboard-card {
+        padding: 15px;
+    }
+
+    .dashboard-card.collapsed {
+        padding-bottom: 15px;
+    }
+
+    .dashboard-card:hover {
+        transform: none;
+    }
 }
 </style>
 
@@ -936,6 +1011,43 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStreakData();
     renderStreakCalendar();
     loadSessions();
+    initializeAccordion();
+});
+
+// Accordion Functions (for mobile)
+function initializeAccordion() {
+    // Only initialize accordion on mobile
+    if (window.innerWidth <= 768) {
+        const cards = document.querySelectorAll('.dashboard-card[data-accordion]');
+        cards.forEach((card, index) => {
+            // Collapse all cards except the first one on initial load
+            if (index > 0) {
+                card.classList.add('collapsed');
+            }
+        });
+    }
+}
+
+function toggleAccordion(accordionId) {
+    // Only work on mobile
+    if (window.innerWidth > 768) return;
+    
+    const card = document.querySelector(`.dashboard-card[data-accordion="${accordionId}"]`);
+    if (card) {
+        card.classList.toggle('collapsed');
+    }
+}
+
+// Handle window resize
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+        // Remove all collapsed classes on desktop
+        const cards = document.querySelectorAll('.dashboard-card[data-accordion]');
+        cards.forEach(card => card.classList.remove('collapsed'));
+    } else {
+        // Re-initialize accordion on mobile
+        initializeAccordion();
+    }
 });
 
 // Mood Functions

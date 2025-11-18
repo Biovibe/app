@@ -61,6 +61,34 @@ response.end(css);
 console.log(request.url)
 }
 
+// IMPORTANT: Define template.css route BEFORE express.static middleware
+// so it can dynamically apply theme colors instead of serving static file
+app.get('/template.css', (req, res) => {
+    try {
+        let css = fs.readFileSync('public/template.css', 'utf-8');
+        
+        // Apply theme-specific colors to CSS
+        const selectedTheme = getThemeVariables(userData.theme);
+        
+        // Replace CSS variables with theme colors
+        css = css.replace(/--light-lavender: #e6e6fa;/, `--light-lavender: ${selectedTheme.lightColor};`);
+        css = css.replace(/--greyish-purple: #d8bfd8;/, `--greyish-purple: ${selectedTheme.mediumColor};`);
+        css = css.replace(/--purple: #9370db;/, `--purple: ${selectedTheme.primaryColor};`);
+        css = css.replace(/--dark-purple: #3e2741;/, `--dark-purple: ${selectedTheme.darkColor};`);
+        css = css.replace(/--light-grey: #f8f9ff;/, `--light-grey: ${selectedTheme.lightBackground};`);
+        css = css.replace(/background-color: var\(--purple\);/, `background-color: ${selectedTheme.bodyBackground};`);
+        
+        // Prevent caching so theme changes take effect immediately
+        res.setHeader('Content-Type', 'text/css');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        res.send(css);
+    } catch (error) {
+        res.status(500).send('Error loading CSS');
+    }
+});
+
 app.use(express.static('public'))
 app.use(express.json())
 
@@ -79,7 +107,7 @@ app.get('/main', (req, res) => {
     res.send(main);
 });
 app.get('/settings', (req, res) => {
-    const settings = makepage("Settings", "settings.html");
+    const settings = makesettings("Settings", "settings.html");
     res.send(settings);
 });
 app.get('/aboutMe', (req, res) => {
@@ -101,26 +129,6 @@ app.get('/journal', (req, res) => {
 app.get('/breathing-exercise.html', (req, res) => {
     const breathingExercise = fs.readFileSync('breathing-exercise.html', 'utf-8');
     res.send(breathingExercise);
-});
-app.get('/template.css', (req, res) => {
-    try {
-        let css = fs.readFileSync('public/template.css', 'utf-8');
-        
-        // Apply theme-specific colors to CSS
-        const selectedTheme = getThemeVariables(userData.theme);
-        
-        // Replace CSS variables with theme colors
-        css = css.replace(/--light-lavender: #e6e6fa;/, `--light-lavender: ${selectedTheme.lightColor};`);
-        css = css.replace(/--greyish-purple: #d8bfd8;/, `--greyish-purple: ${selectedTheme.mediumColor};`);
-        css = css.replace(/--purple: #9370db;/, `--purple: ${selectedTheme.primaryColor};`);
-        css = css.replace(/--dark-purple: #3e2741;/, `--dark-purple: ${selectedTheme.darkColor};`);
-        css = css.replace(/--light-grey: #f8f9ff;/, `--light-grey: ${selectedTheme.lightBackground};`);
-        
-        res.setHeader('Content-Type', 'text/css');
-        res.send(css);
-    } catch (error) {
-        res.status(500).send('Error loading CSS');
-    }
 });
 
 // API endpoints for user settings management
@@ -307,6 +315,25 @@ function makerelax(title, content){
     relaxHeader = applyThemeToRelaxHeader(relaxHeader, userData.theme);
     
     html = html.replaceAll("paste header here", relaxHeader);
+    html = html.replaceAll("paste footer here", footer);
+    html = html.replaceAll("paste title here", title);
+    html = html.replaceAll("paste content here", contentData);
+    return html;
+}
+
+function makesettings(title, content){
+    let html = fs.readFileSync('template.html', 'utf-8');
+    let settingsHeader = fs.readFileSync('settingsheader.html', 'utf-8');
+    const footer = fs.readFileSync('footer.html', 'utf-8');
+    const contentData = fs.readFileSync(content, 'utf-8');
+    
+    // Apply theme to the page
+    html = applyThemeToPage(html, userData.theme);
+    
+    // Apply theme colors to the Settings header
+    settingsHeader = applyThemeToSettingsHeader(settingsHeader, userData.theme);
+    
+    html = html.replaceAll("paste header here", settingsHeader);
     html = html.replaceAll("paste footer here", footer);
     html = html.replaceAll("paste title here", title);
     html = html.replaceAll("paste content here", contentData);
@@ -670,6 +697,95 @@ function applyThemeToAboutMeHeader(headerHtml, theme) {
 }
 
 function applyThemeToRelaxHeader(headerHtml, theme) {
+    const themes = {
+        purple: {
+            gradient: 'linear-gradient(180deg, #4a148c 0%, #6a1b9a 25%, #8e24aa 50%, #ab47bc 75%, #ce93d8 100%)',
+            mountain1Start: '#311b92',
+            mountain1End: '#512da8',
+            mountain2Start: '#512da8', 
+            mountain2End: '#673ab7',
+            mountain3Start: '#673ab7',
+            mountain3End: '#7986cb',
+            overlay: 'linear-gradient(45deg, rgba(156, 39, 176, 0.3) 0%, rgba(103, 58, 183, 0.2) 50%, rgba(63, 81, 181, 0.1) 100%)'
+        },
+        green: {
+            gradient: 'linear-gradient(180deg, #1b5e20 0%, #2e7d32 25%, #388e3c 50%, #4caf50 75%, #81c784 100%)',
+            mountain1Start: '#0d4f0c',
+            mountain1End: '#1b5e20',
+            mountain2Start: '#1b5e20',
+            mountain2End: '#2e7d32',
+            mountain3Start: '#2e7d32',
+            mountain3End: '#4caf50',
+            overlay: 'linear-gradient(45deg, rgba(27, 94, 32, 0.3) 0%, rgba(46, 125, 50, 0.2) 50%, rgba(56, 142, 60, 0.1) 100%)'
+        },
+        blue: {
+            gradient: 'linear-gradient(180deg, #0d47a1 0%, #1565c0 25%, #1976d2 50%, #2196f3 75%, #64b5f6 100%)',
+            mountain1Start: '#0a3d91',
+            mountain1End: '#0d47a1',
+            mountain2Start: '#0d47a1',
+            mountain2End: '#1565c0',
+            mountain3Start: '#1565c0',
+            mountain3End: '#1976d2',
+            overlay: 'linear-gradient(45deg, rgba(13, 71, 161, 0.3) 0%, rgba(21, 101, 192, 0.2) 50%, rgba(25, 118, 210, 0.1) 100%)'
+        },
+        red: {
+            gradient: 'linear-gradient(180deg, #b71c1c 0%, #c62828 25%, #d32f2f 50%, #e91e63 75%, #f48fb1 100%)',
+            mountain1Start: '#8e0000',
+            mountain1End: '#b71c1c',
+            mountain2Start: '#b71c1c',
+            mountain2End: '#c62828',
+            mountain3Start: '#c62828',
+            mountain3End: '#d32f2f',
+            overlay: 'linear-gradient(45deg, rgba(183, 28, 28, 0.3) 0%, rgba(198, 40, 40, 0.2) 50%, rgba(211, 47, 47, 0.1) 100%)'
+        }
+    };
+    
+    const selectedTheme = themes[theme] || themes.purple;
+    
+    // Replace the main background gradient
+    headerHtml = headerHtml.replace(
+        /background: linear-gradient\(180deg[^;]+\);/,
+        `background: ${selectedTheme.gradient};`
+    );
+    
+    // Replace the overlay gradient
+    headerHtml = headerHtml.replace(
+        /linear-gradient\(45deg, rgba\([^)]+\)[^;]+\)/,
+        selectedTheme.overlay
+    );
+    
+    // Replace mountain gradient colors in the SVG
+    headerHtml = headerHtml.replace(
+        /stop-color:%23311b92/g, 
+        `stop-color:%23${selectedTheme.mountain1Start.substring(1)}`
+    );
+    headerHtml = headerHtml.replace(
+        /stop-color:%23512da8/g, 
+        `stop-color:%23${selectedTheme.mountain1End.substring(1)}`
+    );
+    headerHtml = headerHtml.replace(
+        /stop-color:%23673ab7/g, 
+        `stop-color:%23${selectedTheme.mountain2End.substring(1)}`
+    );
+    headerHtml = headerHtml.replace(
+        /stop-color:%237986cb/g, 
+        `stop-color:%23${selectedTheme.mountain3End.substring(1)}`
+    );
+    
+    // Replace the mountain gradient definitions
+    headerHtml = headerHtml.replace(
+        /%23512da8;stop-opacity:0\.8/g,
+        `%23${selectedTheme.mountain2Start.substring(1)};stop-opacity:0.8`
+    );
+    headerHtml = headerHtml.replace(
+        /%23673ab7;stop-opacity:0\.7/g,
+        `%23${selectedTheme.mountain3Start.substring(1)};stop-opacity:0.7`
+    );
+    
+    return headerHtml;
+}
+
+function applyThemeToSettingsHeader(headerHtml, theme) {
     const themes = {
         purple: {
             gradient: 'linear-gradient(180deg, #4a148c 0%, #6a1b9a 25%, #8e24aa 50%, #ab47bc 75%, #ce93d8 100%)',

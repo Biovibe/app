@@ -1,9 +1,4 @@
 <div class="settings-page">
-    <div class="back-button-container">
-        <button onclick="window.location.href='/main'" class="back-button">
-            ← Back to Main
-        </button>
-    </div>
     
     <div class="settings-container">
         <div class="settings-card">
@@ -74,36 +69,20 @@
 </div>
 
 <style>
-.settings-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    width: 100%;
+.settings-page * {
     box-sizing: border-box;
+}
+
+.settings-page {
+    padding: 20px;
+    background: var(--light-lavender);
+    flex: 1 1 0;
     overflow-y: auto;
     overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
     min-height: 0;
-}
-
-.back-button-container {
-    margin-bottom: 30px;
-}
-
-.back-button {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px 15px;
-    color: #6c757d;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s;
-}
-
-.back-button:hover {
-    background: #e9ecef;
-    color: #495057;
+    -webkit-overflow-scrolling: touch;
 }
 
 .settings-container {
