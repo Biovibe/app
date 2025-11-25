@@ -3,7 +3,46 @@
 <head>
     <title>paste title here</title>
     <link rel="stylesheet" href="template.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- NATIVE APP VIEWPORT: viewport-fit=cover extends content behind notch/safe areas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- App Icons (used by some native frameworks) -->
+    <link rel="icon" type="image/png" href="/biovibe9.png">
+    <link rel="apple-touch-icon" href="/biovibe9.png">
+    
+    <!-- Manifest (used by Capacitor/Cordova) -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- NATIVE APP META TAGS -->
+    <meta name="theme-color" content="#9370db">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Inline critical CSS for native app feel -->
+    <style>
+        /* DISABLE BROWSER BEHAVIORS - Makes it feel like native app */
+        * {
+            -webkit-tap-highlight-color: transparent; /* Remove tap flash on iOS */
+            -webkit-touch-callout: none; /* Disable long-press menu on iOS */
+            -webkit-user-select: none; /* Prevent accidental text selection */
+            user-select: none;
+        }
+        
+        /* Allow text selection only where needed */
+        input, textarea, [contenteditable] {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        /* FAST TAP RESPONSE - Removes 300ms delay */
+        button, a, .clickable {
+            touch-action: manipulation;
+        }
+        
+        /* PREVENT INPUT ZOOM on iOS - fonts < 16px cause auto-zoom */
+        input, select, textarea {
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <main>
@@ -48,6 +87,34 @@
     </nav>
 
     <script>
+        // ===== NATIVE APP BEHAVIORS =====
+        
+        // PREVENT DOUBLE-TAP ZOOM - Native apps don't zoom on double-tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // PREVENT PULL-TO-REFRESH - Keeps users in your app
+        let startY = 0;
+        document.body.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].pageY;
+        }, { passive: true });
+        
+        document.body.addEventListener('touchmove', function(e) {
+            const y = e.touches[0].pageY;
+            // If scrolling up at top of page, prevent pull-to-refresh
+            if (y > startY && window.scrollY === 0) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // ===== MOBILE NAVIGATION =====
+        
         function toggleMobileNav() {
             const nav = document.getElementById('mobile-nav');
             const toggle = document.querySelector('.mobile-nav-toggle');

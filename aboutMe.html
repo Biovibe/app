@@ -10,13 +10,16 @@
     <!-- Personal Information Sections -->
     <div class="info-sections">
         <!-- Name Section -->
-        <div class="info-card">
-            <div class="info-header">
+        <div class="info-card active">
+            <div class="info-header" onclick="toggleAccordion(this)">
                 <div class="info-label">
                     <span class="info-icon">👤</span>
                     <h3>Full Name</h3>
                 </div>
-                <button class="edit-btn" onclick="editField('name')">Edit</button>
+                <div class="header-actions">
+                    <button class="edit-btn" onclick="event.stopPropagation(); editField('name')">Edit</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="info-content">
                 <p id="name-display">John Doe</p>
@@ -32,12 +35,15 @@
 
         <!-- Birthday Section -->
         <div class="info-card">
-            <div class="info-header">
+            <div class="info-header" onclick="toggleAccordion(this)">
                 <div class="info-label">
                     <span class="info-icon">🎂</span>
                     <h3>Birthday</h3>
                 </div>
-                <button class="edit-btn" onclick="editField('birthday')">Edit</button>
+                <div class="header-actions">
+                    <button class="edit-btn" onclick="event.stopPropagation(); editField('birthday')">Edit</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="info-content">
                 <p id="birthday-display">January 1, 2000</p>
@@ -53,12 +59,15 @@
 
         <!-- Email Section -->
         <div class="info-card">
-            <div class="info-header">
+            <div class="info-header" onclick="toggleAccordion(this)">
                 <div class="info-label">
                     <span class="info-icon">📧</span>
                     <h3>Email</h3>
                 </div>
-                <button class="edit-btn" onclick="editField('email')">Edit</button>
+                <div class="header-actions">
+                    <button class="edit-btn" onclick="event.stopPropagation(); editField('email')">Edit</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="info-content">
                 <p id="email-display">john.doe@example.com</p>
@@ -74,12 +83,15 @@
 
         <!-- Phone Section -->
         <div class="info-card">
-            <div class="info-header">
+            <div class="info-header" onclick="toggleAccordion(this)">
                 <div class="info-label">
                     <span class="info-icon">📱</span>
                     <h3>Phone</h3>
                 </div>
-                <button class="edit-btn" onclick="editField('phone')">Edit</button>
+                <div class="header-actions">
+                    <button class="edit-btn" onclick="event.stopPropagation(); editField('phone')">Edit</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="info-content">
                 <p id="phone-display">(555) 123-4567</p>
@@ -95,12 +107,15 @@
 
         <!-- Location Section -->
         <div class="info-card">
-            <div class="info-header">
+            <div class="info-header" onclick="toggleAccordion(this)">
                 <div class="info-label">
                     <span class="info-icon">📍</span>
                     <h3>Location</h3>
                 </div>
-                <button class="edit-btn" onclick="editField('location')">Edit</button>
+                <div class="header-actions">
+                    <button class="edit-btn" onclick="event.stopPropagation(); editField('location')">Edit</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="info-content">
                 <p id="location-display">City, State</p>
@@ -116,12 +131,15 @@
 
         <!-- Bio Section -->
         <div class="info-card">
-            <div class="info-header">
+            <div class="info-header" onclick="toggleAccordion(this)">
                 <div class="info-label">
                     <span class="info-icon">📝</span>
                     <h3>Bio</h3>
                 </div>
-                <button class="edit-btn" onclick="editField('bio')">Edit</button>
+                <div class="header-actions">
+                    <button class="edit-btn" onclick="event.stopPropagation(); editField('bio')">Edit</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="info-content">
                 <p id="bio-display">Write a few words about yourself...</p>
@@ -137,12 +155,15 @@
 
         <!-- Emergency Contacts Section -->
         <div class="info-card emergency-contacts-card">
-            <div class="info-header">
+            <div class="info-header" onclick="toggleAccordion(this)">
                 <div class="info-label">
                     <span class="info-icon">🚨</span>
                     <h3>Emergency Contacts</h3>
                 </div>
-                <button class="edit-btn add-contact-btn" onclick="showAddContactForm()">Add Contact</button>
+                <div class="header-actions">
+                    <button class="edit-btn add-contact-btn" onclick="event.stopPropagation(); showAddContactForm()">Add Contact</button>
+                    <span class="accordion-arrow">▼</span>
+                </div>
             </div>
             <div class="info-content">
                 <div id="emergency-contacts-list" class="contacts-list">
@@ -192,6 +213,7 @@
 
 .aboutme-content {
     padding: 20px;
+    padding-bottom: 60px;
     background: var(--light-lavender);
     flex: 1 1 0;
     overflow-y: auto;
@@ -278,7 +300,49 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 0;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.info-header:hover {
+    background-color: var(--light-grey);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.accordion-arrow {
+    font-size: 0.8rem;
+    color: var(--purple);
+    transition: transform 0.3s ease;
+}
+
+.info-card.active .accordion-arrow {
+    transform: rotate(180deg);
+}
+
+.info-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, margin-top 0.4s ease, opacity 0.4s ease;
+    opacity: 0;
+}
+
+.info-card.active .info-content {
+    max-height: 2000px;
+    margin-top: 15px;
+    opacity: 1;
+}
+
+/* Ensure emergency contacts section has enough space */
+.info-card.emergency-contacts-card.active .info-content {
+    max-height: 3000px;
 }
 
 .info-label {
@@ -396,6 +460,7 @@
 @media (max-width: 768px) {
     .aboutme-content {
         padding: 15px 10px;
+        padding-bottom: 80px;
     }
 
     .profile-avatar {
@@ -412,13 +477,16 @@
     }
 
     .info-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        padding: 8px;
+    }
+
+    .header-actions {
+        gap: 8px;
     }
 
     .edit-btn {
-        align-self: flex-end;
+        padding: 6px 15px;
+        font-size: 0.85rem;
     }
 
     .info-label h3 {
@@ -429,6 +497,7 @@
 @media (max-width: 480px) {
     .aboutme-content {
         padding: 10px 5px;
+        padding-bottom: 100px;
     }
 
     .profile-avatar {
@@ -667,6 +736,22 @@ document.addEventListener('DOMContentLoaded', function() {
     loadEmergencyContacts();
     renderEmergencyContacts();
 });
+
+// Toggle accordion
+function toggleAccordion(headerElement) {
+    const card = headerElement.closest('.info-card');
+    const wasActive = card.classList.contains('active');
+    
+    // Optionally close all other accordions (uncomment for single-open behavior)
+    // document.querySelectorAll('.info-card').forEach(c => c.classList.remove('active'));
+    
+    // Toggle current accordion
+    if (wasActive) {
+        card.classList.remove('active');
+    } else {
+        card.classList.add('active');
+    }
+}
 
 // Load profile data from localStorage or use defaults
 function loadProfileData() {

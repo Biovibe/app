@@ -304,12 +304,14 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1001;
+    z-index: 999999;
     justify-content: center;
     align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .journal-editor-modal.show {
@@ -326,6 +328,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
+    z-index: 1000000;
 }
 
 .journal-editor-header {
@@ -685,6 +689,12 @@ function openJournalEditor(journalId = null) {
         contentInput.value = '';
     }
     
+    // Hide header when modal opens (fix for mobile z-index issue)
+    const header = document.querySelector('header');
+    if (header) {
+        header.style.display = 'none';
+    }
+    
     modal.classList.add('show');
     titleInput.focus();
 }
@@ -694,6 +704,12 @@ function closeJournalEditor() {
     const modal = document.getElementById('journal-editor-modal');
     modal.classList.remove('show');
     currentEditingJournalId = null;
+    
+    // Restore header visibility when modal closes
+    const header = document.querySelector('header');
+    if (header) {
+        header.style.display = '';
+    }
 }
 
 // Save journal entry

@@ -1,0 +1,21 @@
+{
+  "name": "BioVibe - Wellness Companion",
+  "short_name": "BioVibe",
+  "description": "Your wellness companion for stress management and mindfulness. Join the vibe.",
+  "start_url": "/main",
+  "display": "standalone",
+  "background_color": "#e6e6fa",
+  "theme_color": "#9370db",
+  "orientation": "portrait",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/biovibe9.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
