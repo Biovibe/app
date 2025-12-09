@@ -11,11 +11,12 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/biovibe9.png",
+      "src": "/biovibe7.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ]
 }
+
 
