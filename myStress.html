@@ -40,6 +40,11 @@
             <div class="chart-header">
                 <h3>Stress Level Monitoring</h3>
                 <div class="chart-controls">
+                    <label for="csv-file-input" class="control-btn upload-btn" style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span class="btn-icon">📁</span>
+                        <span class="btn-text">Upload CSV</span>
+                        <input type="file" id="csv-file-input" accept=".csv" style="display: none;" />
+                    </label>
                     <button class="control-btn pause-btn" id="pause-resume-btn">
                         <span class="btn-icon">⏸️</span>
                         <span class="btn-text">Pause</span>
@@ -48,13 +53,13 @@
                         <span class="btn-icon">💾</span>
                         <span class="btn-text">Save Session</span>
                     </button>
-                    <div id="connection-status" class="status disconnected">Disconnected</div>
+                    <div id="connection-status" class="status disconnected" style="display: none;">Not Available</div>
                 </div>
             </div>
             <div id="stress-chart" class="stress-chart"></div>
             <div class="chart-info">
                 <div class="current-reading">
-                    <span class="label">Current Level:</span>
+                    <span class="label">Stress Level:</span>
                     <span id="current-stress-level" class="value">--</span>
                 </div>
                 <div class="session-stats">
@@ -343,6 +348,15 @@
     background: var(--light-grey);
     color: var(--dark-grey);
     cursor: not-allowed;
+}
+
+.upload-btn {
+    background: #2196F3;
+    color: var(--white);
+}
+
+.upload-btn:hover {
+    background: #1976D2;
 }
 
 .clear-all-btn {
@@ -932,15 +946,21 @@ let sessionStats = {
     sum: 0
 };
 
-// WebSocket connection
-let stressSocket = null;
-
 // Pause state
 let isPaused = false;
 
 // Saved sessions storage
 let savedSessions = [];
 let currentTab = 'live';
+
+// Streaming state for incremental plotting
+let streamingInterval = null;
+let streamingData = {
+    timeSeconds: [],
+    stressValues: [],
+    processedBands: {},
+    currentIndex: 0
+};
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
@@ -951,7 +971,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePauseButton();
     initializeSaveButton();
     initializeStressChart();
-    connectToStressMonitor();
+    initializeCSVUpload();
     renderSavedSessions();
 });
 
@@ -1195,7 +1215,7 @@ function initializeStressChart() {
 
         const layout = {
             title: {
-                text: 'Real-time Stress Monitoring',
+                text: 'Stress Level Monitoring',
                 font: {size: 16, color: '#333'}
             },
             xaxis: {
@@ -1227,114 +1247,420 @@ function initializeStressChart() {
     };
 }
 
-// Connect to stress monitoring WebSocket
-function connectToStressMonitor() {
-    const statusElement = document.getElementById('connection-status');
+// CSV parsing functions (matching SSEServer.py logic)
+function parseRow(line) {
+    // CSV line: timestamp, v1, v2, ...
+    // Skip empty lines or lines starting with "File created"
+    line = line.trim();
+    if (!line || line.startsWith("File created")) {
+        return null;
+    }
+    
+    const parts = line.split(',');
+    if (parts.length < 2) return null;
+    
+    const ts = parts[0].trim();
+    const values = parts.slice(1).map(v => {
+        const trimmed = v.trim();
+        if (!trimmed) return null;
+        const num = parseFloat(trimmed);
+        return isNaN(num) ? null : num;
+    });
+    
+    // Check if we have a valid timestamp and at least one valid numeric value
+    if (!ts || !values.some(v => v !== null && !isNaN(v))) return null;
+    
+    return { timestamp: ts, values };
+}
+
+function parseTimestampToMs(tsStr) {
+    // Normalize "YYYY-MM-DD HH:MM:SS.mmmuuu" -> "YYYY-MM-DDTHH:MM:SS.mmm"
+    const normalized = tsStr.replace(' ', 'T').replace(/\.(\d{3})\d+$/, '.$1');
+    const parsed = Date.parse(normalized);
+    return isNaN(parsed) ? null : parsed;
+}
+
+function elapsedSeconds(timestampsMs) {
+    if (!timestampsMs || !Array.isArray(timestampsMs) || !timestampsMs.length) return [];
+    const t0 = timestampsMs[0];
+    return timestampsMs.map(t => (t - t0) / 1000);
+}
+
+// Precomputed SciPy butter(4, band, fs=256, output='sos') coefficients (from plot_csv_sse_v2.html)
+// Each row: [b0, b1, b2, a0, a1, a2]
+const SOS_MAP = {
+    delta: [
+        [3.049431e-06, 6.098862e-06, 3.049431e-06, 1.0, -1.870149771975, 0.875842589569],
+        [1.0, 2.0, 1.0, 1.0, -1.934664050576, 0.943586791437],
+        [1.0, -2.0, 1.0, 1.0, -1.97380955467, 0.974045607595],
+        [1.0, -2.0, 1.0, 1.0, -1.992248504568, 0.992405879962],
+    ],
+    alpha: [
+        [1.2134333e-05, 2.4268666e-05, 1.2134333e-05, 1.0, -1.812006276821, 0.883140501637],
+        [1.0, 2.0, 1.0, 1.0, -1.853236722842, 0.902229612842],
+        [1.0, -2.0, 1.0, 1.0, -1.849664736864, 0.944535265517],
+        [1.0, -2.0, 1.0, 1.0, -1.924909923565, 0.963969676428],
+    ],
+    beta: [
+        [0.001159024932, 0.002318049864, 0.001159024932, 1.0, -1.360825895842, 0.631413287771],
+        [1.0, 2.0, 1.0, 1.0, -1.580273251141, 0.720901252756],
+        [1.0, -2.0, 1.0, 1.0, -1.362661520584, 0.810386425508],
+        [1.0, -2.0, 1.0, 1.0, -1.801507804674, 0.902634931661],
+    ],
+};
+
+// Configuration matching plot_csv_sse_v2.html
+const FS = 256; // Hz
+const BANDS = {
+    delta: { low: 0.5, high: 4, color: '#1565c0' },
+    alpha: { low: 8, high: 13, color: '#2e7d32' },
+    beta:  { low: 13, high: 30, color: '#c62828' },
+};
+
+function filtfilt(data, sos) {
+    // Forward-backward filtering using IIRFilter + biquad cascade (from plot_csv_sse_v2.html)
+    const forward = applySOS(data, sos);
+    const reversed = forward.slice().reverse();
+    const backward = applySOS(reversed, sos);
+    return backward.reverse();
+}
+
+function applySOS(data, sos) {
+    // sos: array of [b0,b1,b2,a0,a1,a2] (from plot_csv_sse_v2.html)
+    let y = data.slice();
+    sos.forEach(([b0,b1,b2,a0,a1,a2]) => {
+        // Direct Form II Transposed
+        let z1 = 0, z2 = 0;
+        const out = new Array(y.length);
+        for (let i = 0; i < y.length; i++) {
+            const x = y[i];
+            const y0 = b0*x + z1;
+            z1 = b1*x - a1*y0 + z2;
+            z2 = b2*x - a2*y0;
+            out[i] = y0;
+        }
+        y = out;
+    });
+    return y;
+}
+
+function zscore(arr) {
+    // Z-score normalization (from plot_csv_sse_v2.html)
+    const n = arr.length;
+    if (!n) return [];
+    const mean = arr.reduce((s, v) => s + v, 0) / n;
+    const std = Math.sqrt(arr.reduce((s, v) => s + (v - mean) * (v - mean), 0) / n) || 1;
+    return arr.map(v => (v - mean) / std);
+}
+
+// Initialize CSV file upload
+function initializeCSVUpload() {
+    const fileInput = document.getElementById('csv-file-input');
+    if (!fileInput) return;
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const text = event.target.result;
+                const lines = text.split(/\r?\n/).filter(Boolean);
+                const rows = [];
+                
+                // Parse CSV rows using same logic as SSEServer.py
+                for (const line of lines) {
+                    const parsed = parseRow(line);
+                    if (parsed) {
+                        rows.push(parsed);
+                    }
+                }
+                
+                if (rows.length === 0) {
+                    alert('No valid data found in CSV file. Please check the file format.');
+                    return;
+                }
+                
+                // Process CSV data and update chart
+                processCSVData(rows);
+                
+                console.log(`Loaded ${rows.length} rows from CSV file`);
+            } catch (error) {
+                console.error('Error reading CSV file:', error);
+                alert('Error reading CSV file: ' + error.message);
+            }
+        };
+        
+        reader.onerror = function() {
+            alert('Error reading file');
+        };
+        
+        reader.readAsText(file);
+    });
+}
+
+// Process CSV data and update stress chart with simulated-live streaming
+function processCSVData(rows) {
+    // Reset session data
+    resetStressSession();
+    
+    // Stop any existing streaming
+    if (streamingInterval) {
+        clearInterval(streamingInterval);
+        streamingInterval = null;
+    }
+    
+    if (rows.length === 0) {
+        alert('No valid data found in CSV file.');
+        return;
+    }
     
     try {
-        // Use the same WebSocket server as the RandomNumGenerator
-        // stressSocket = new WebSocket('ws://192.168.0.24:8000');
-        stressSocket = new WebSocket('ws://127.0.0.1:8000:8000');
+        // Validate rows structure
+        if (!rows || !Array.isArray(rows) || rows.length === 0) {
+            alert('Invalid CSV data format.');
+            return;
+        }
         
-        stressSocket.onopen = function() {
-            console.log('Connected to stress monitoring server.');
-            statusElement.textContent = 'Connected';
-            statusElement.className = 'status connected';
-            updateSessionDuration();
-        };
-
-        stressSocket.onmessage = function(event) {
-            console.log('Stress data received:', event.data);
-            
-            // Skip processing if paused
-            if (isPaused) {
-                console.log('Data collection paused - ignoring incoming data');
-                return;
-            }
-            
-            // Parse the data (string of numbers separated by spaces)
-            const numbers = event.data.split(' ').map(num => parseFloat(num)).filter(num => !isNaN(num));
-            
-            if (numbers.length > 0) {
-                // Process each stress level reading with time spacing
-                numbers.forEach((value, index) => {
-                    // Add time offset so points don't stack vertically
-                    setTimeout(() => {
-                        addStressDataPoint(value);
-                        updateStressChart();
-                        updateStressStats();
-                    }, index * 50); // Spread points 50ms apart
-                });
-            }
-        };
-
-        stressSocket.onerror = function(error) {
-            console.error('WebSocket error:', error);
-            statusElement.textContent = 'Connection Error';
-            statusElement.className = 'status disconnected';
-        };
-
-        stressSocket.onclose = function() {
-            console.log('Stress monitoring connection closed.');
-            statusElement.textContent = 'Disconnected';
-            statusElement.className = 'status disconnected';
-            
-            // Attempt to reconnect after 5 seconds
-            setTimeout(connectToStressMonitor, 5000);
-        };
+        // Filter rows to only include those with valid structure
+        const validRows = rows.filter(r => 
+            r && 
+            r.values && 
+            Array.isArray(r.values) && 
+            r.values.length > 0 &&
+            r.timestamp
+        );
         
-    } catch (error) {
-        console.error('Failed to connect to stress monitor:', error);
-        statusElement.textContent = 'Connection Failed';
-        statusElement.className = 'status disconnected';
-    }
-}
-
-// Add a new stress data point
-function addStressDataPoint(value) {
-    const currentTime = Math.floor((Date.now() - sessionStartTime) / 1000); // Convert to whole seconds
-    
-    stressTimeData.push(currentTime);
-    stressValueData.push(value);
-    
-    // Update session stats
-    sessionStats.current = value;
-    sessionStats.count++;
-    sessionStats.sum += value;
-    sessionStats.average = sessionStats.sum / sessionStats.count;
-    sessionStats.peak = Math.max(sessionStats.peak, value);
-    
-    // Keep only last 100 data points for performance
-    if (stressTimeData.length > 100) {
-        stressTimeData.shift();
-        stressValueData.shift();
-    }
-    
-    // Update save button state
-    updateSaveButtonState();
-}
-
-// Update the stress chart
-function updateStressChart() {
-    if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
-        Plotly.update('stress-chart', {
-            x: [stressTimeData],
-            y: [stressValueData]
+        if (validRows.length === 0) {
+            alert('No valid rows found in CSV file.');
+            return;
+        }
+        
+        // Extract stress values from CSV using the same filtered rows
+        // Using first value column (index 0) - adjust if needed for your data format
+        const stressValues = validRows
+            .map(r => r.values[0])
+            .filter(v => v !== null && v !== undefined && !isNaN(v));
+        
+        if (stressValues.length === 0) {
+            alert('No valid numeric values found in CSV file.');
+            return;
+        }
+        
+        // Parse timestamps using the same filtered rows (keep same length)
+        const tsMsRaw = validRows.map(r => parseTimestampToMs(r.timestamp));
+        const tsMs = tsMsRaw.filter(t => t !== null && t !== undefined);
+        
+        let timeSeconds;
+        if (tsMs.length === stressValues.length && tsMs.length > 0 && Array.isArray(tsMs)) {
+            // Use actual timestamps
+            timeSeconds = elapsedSeconds(tsMs);
+        } else {
+            // Fallback: use index-based time (matching plot_csv_sse_v2.html: fs=256 Hz)
+            timeSeconds = [...Array(stressValues.length).keys()].map(i => i / FS);
+        }
+        
+        // Ensure arrays have same length
+        if (stressValues.length !== timeSeconds.length) {
+            // Trim to shortest array
+            const minLength = Math.min(stressValues.length, timeSeconds.length);
+            stressValues.splice(minLength);
+            timeSeconds.splice(minLength);
+        }
+        
+        // Validate arrays before proceeding
+        if (!stressValues.length || !timeSeconds.length) {
+            alert('Could not process CSV data - invalid array lengths.');
+            return;
+        }
+        
+        // Pre-process all data for streaming (matching plot_csv_sse_v2.html approach exactly)
+        const N = stressValues.length;
+        const sig = stressValues; // Signal data (column 1 per requirement, matching plot_csv_sse_v2.html)
+        const tSec = timeSeconds; // Time in seconds
+        
+        // Pre-process all filtered signals (matching plot_csv_sse_v2.html exactly)
+        const processedBands = {};
+        Object.entries(BANDS).forEach(([name, cfg]) => {
+            const sos = SOS_MAP[name];
+            if (!sos) throw new Error(`No SOS for band ${name}`);
+            const filtered = filtfilt(sig, sos);
+            const normed = zscore(filtered);
+            processedBands[name] = normed;
         });
         
-        // Auto-scale the x-axis to show recent data
-        if (stressTimeData.length > 20) {
-            const recentTimes = stressTimeData.slice(-50);
-            Plotly.relayout('stress-chart', {
-                'xaxis.range': [recentTimes[0], recentTimes[recentTimes.length - 1]]
+        // Calculate the full x-axis range based on file size
+        const minT = 0;
+        const maxT = tSec.length > 0 ? tSec[tSec.length - 1] : 1;
+        
+        // Calculate the full y-axis range from all processed bands (matching plot_csv_sse_v2.html)
+        const allYValues = [
+            ...processedBands.delta,
+            ...processedBands.alpha,
+            ...processedBands.beta
+        ];
+        const minY = Math.min(...allYValues);
+        const maxY = Math.max(...allYValues);
+        const yPadding = (maxY - minY) * 0.1; // 10% padding
+        const yMin = minY - yPadding;
+        const yMax = maxY + yPadding;
+        
+        // Initialize plot with empty traces (matching plot_csv_sse_v2.html - one trace per band)
+        const traces = [];
+        Object.entries(BANDS).forEach(([name, cfg]) => {
+            traces.push({
+                x: [],
+                y: [],
+                type: 'scatter',
+                mode: 'lines',
+                name: name,
+                line: { width: 1.5, color: cfg.color },
+            });
+        });
+
+        const layout = {
+            title: {
+                text: 'Stress Level Monitoring',
+                font: {size: 16, color: '#333'}
+            },
+            xaxis: {
+                title: 'Time (seconds)',
+                gridcolor: '#f0f0f0',
+                showgrid: true,
+                range: [minT, maxT]  // Fixed range to full file size
+            },
+            yaxis: {
+                title: 'Z-score',
+                gridcolor: '#f0f0f0',
+                showgrid: true,
+                range: [yMin, yMax]  // Fixed range based on all data
+            },
+            showlegend: true,
+            legend: { orientation: 'h' },
+            margin: {l: 60, r: 30, t: 50, b: 70},
+            plot_bgcolor: 'white',
+            paper_bgcolor: 'white'
+        };
+
+        if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+            Plotly.newPlot('stress-chart', traces, layout, {
+                responsive: true,
+                displayModeBar: false,
+                staticPlot: false,
+                scrollZoom: false
             });
         }
+        
+        // Store pre-processed band data for streaming
+        streamingData.timeSeconds = tSec;
+        streamingData.processedBands = processedBands;
+        streamingData.currentIndex = 0;
+        
+        // Start incremental streaming matching plot_csv_sse_v2.html timing (50ms per point = 20 points/second)
+        startIncrementalStreaming(processedBands, tSec);
+        
+    } catch (error) {
+        console.error('Error processing CSV data:', error);
+        alert('Error processing CSV data: ' + error.message);
     }
+}
+
+// Start incremental streaming of data points (matching plot_csv_sse_v2.html logic exactly)
+function startIncrementalStreaming(processedBands, timeSeconds) {
+    const N = processedBands.delta.length; // All bands have same length
+    let currentIndex = 0;
+    
+    // Calculate stats from delta band (or combine all bands)
+    const allValues = [
+        ...processedBands.delta,
+        ...processedBands.alpha,
+        ...processedBands.beta
+    ];
+    
+    // Update stats as we stream (will be finalized at end)
+    sessionStats.count = N;
+    sessionStats.sum = processedBands.delta.reduce((a, b) => a + b, 0);
+    sessionStats.average = sessionStats.sum / sessionStats.count;
+    sessionStats.peak = Math.max(...processedBands.delta);
+    
+    // Calculate duration from x-axis time range (matches the timeSeconds array)
+    const totalDurationSeconds = timeSeconds.length > 0 ? timeSeconds[timeSeconds.length - 1] : 0;
+    sessionStartTime = Date.now() - (totalDurationSeconds * 1000);
+    
+    // Stream points one at a time at 70 points per second (14ms per point)
+    streamingInterval = setInterval(() => {
+        if (currentIndex >= N) {
+            // Streaming complete
+            clearInterval(streamingInterval);
+            streamingInterval = null;
+            
+            // Finalize data arrays (store delta band for stress level display)
+            stressTimeData = [...timeSeconds];
+            stressValueData = [...processedBands.delta];
+            
+            // Update final statistics
+            updateStressStats();
+            updateSaveButtonState();
+            
+            // Update session duration to match x-axis time range
+            const durationSeconds = Math.floor(totalDurationSeconds);
+            const minutes = Math.floor(durationSeconds / 60);
+            const seconds = durationSeconds % 60;
+            document.getElementById('session-duration').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            console.log(`Finished streaming ${N} data points`);
+            return;
+        }
+        
+        // Skip if paused
+        if (isPaused) {
+            return;
+        }
+        
+        // Extend each trace with the next point (matching plot_csv_sse_v2.html extendTraces pattern exactly)
+        if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+            const xValues = [
+                [timeSeconds[currentIndex]], 
+                [timeSeconds[currentIndex]], 
+                [timeSeconds[currentIndex]]
+            ];
+            const yValues = [
+                [processedBands.delta[currentIndex]],
+                [processedBands.alpha[currentIndex]],
+                [processedBands.beta[currentIndex]]
+            ];
+            
+            Plotly.extendTraces('stress-chart', {
+                x: xValues,
+                y: yValues
+            }, [0, 1, 2]); // Update all three traces
+            
+            // Keep x-axis fixed to full file range (no sliding window) - matching plot_csv_sse_v2.html
+        }
+        
+        // Update current stress level as we stream (using delta band)
+        sessionStats.current = processedBands.delta[currentIndex];
+        document.getElementById('current-stress-level').textContent = formatStressLevel(sessionStats.current);
+        
+        currentIndex++;
+        streamingData.currentIndex = currentIndex;
+    }, 25); 
+}
+
+
+// Format stress level display: "High Stress" if >= 0.8, otherwise "Low Stress"
+function formatStressLevel(value) {
+    if (value === null || value === undefined || isNaN(value)) {
+        return '--';
+    }
+    return value >= 0.8 ? 'High' : 'Low';
 }
 
 // Update stress statistics display
 function updateStressStats() {
-    document.getElementById('current-stress-level').textContent = sessionStats.current.toFixed(1);
+    document.getElementById('current-stress-level').textContent = formatStressLevel(sessionStats.current);
     document.getElementById('avg-stress').textContent = sessionStats.average.toFixed(1);
     document.getElementById('peak-stress').textContent = sessionStats.peak.toFixed(1);
 }
@@ -1350,15 +1676,16 @@ function updateSessionDuration() {
         document.getElementById('session-duration').textContent = 
             `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
-    
-    // Update every second if connected
-    if (stressSocket && stressSocket.readyState === WebSocket.OPEN) {
-        setTimeout(updateSessionDuration, 1000);
-    }
 }
 
 // Reset session data when period changes
 function resetStressSession() {
+    // Stop any active streaming
+    if (streamingInterval) {
+        clearInterval(streamingInterval);
+        streamingInterval = null;
+    }
+    
     stressTimeData = [];
     stressValueData = [];
     sessionStartTime = Date.now();
@@ -1368,6 +1695,13 @@ function resetStressSession() {
         current: 0,
         count: 0,
         sum: 0
+    };
+    
+    streamingData = {
+        timeSeconds: [],
+        stressValues: [],
+        processedBands: {},
+        currentIndex: 0
     };
     
     // Clear the chart
@@ -1402,24 +1736,19 @@ function togglePause() {
     updatePauseButton();
     
     if (isPaused) {
-        console.log('Data collection paused');
+        console.log('Data streaming paused');
         // Update chart title to show paused state
         if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
             Plotly.relayout('stress-chart', {
-                'title.text': 'Real-time Stress Monitoring (PAUSED)'
+                'title.text': 'Stress Level Monitoring (PAUSED)'
             });
         }
     } else {
-        console.log('Data collection resumed');
-        // Reset session start time to account for pause duration
-        const currentTime = Date.now();
-        const pauseDuration = currentTime - sessionStartTime - (stressTimeData.length * 1000); // Approximate
-        sessionStartTime = currentTime - (stressTimeData.length * 1000);
-        
+        console.log('Data streaming resumed');
         // Update chart title to show resumed state
         if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
             Plotly.relayout('stress-chart', {
-                'title.text': 'Real-time Stress Monitoring'
+                'title.text': 'Stress Level Monitoring'
             });
         }
     }
