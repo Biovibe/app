@@ -7,39 +7,16 @@
 
     <!-- Live Session Tab -->
     <div class="tab-content active" id="live-tab">
-        <!-- Date Navigation -->
-        <div class="date-navigation">
-            <button class="nav-arrow" id="prev-date">&#8249;</button>
-            <div class="date-display" id="date-display">
-                <span class="current-date" id="current-date">Today</span>
-                <span class="dropdown-arrow">&#9662;</span>
-            </div>
-            <button class="nav-arrow" id="next-date">&#8250;</button>
-        </div>
-
-        <!-- Date Picker Modal -->
-        <div class="date-picker-modal" id="date-picker-modal">
-            <div class="date-picker-content">
-                <input type="date" id="date-picker" />
-                <div class="date-picker-buttons">
-                    <button id="date-picker-cancel">Cancel</button>
-                    <button id="date-picker-confirm">Select</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Time Period Selector -->
-        <div class="time-period-selector">
-            <button class="period-btn active" data-period="day" id="period-day">Day</button>
-            <button class="period-btn" data-period="week" id="period-week">Week</button>
-            <button class="period-btn" data-period="month" id="period-month">Month</button>
-        </div>
-
         <!-- Stress Level Chart -->
         <div class="chart-container">
             <div class="chart-header">
                 <h3>Stress Level Monitoring</h3>
                 <div class="chart-controls">
+                    <label for="csv-file-input" class="control-btn upload-btn" style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <span class="btn-icon">📁</span>
+                        <span class="btn-text">Upload</span>
+                        <input type="file" id="csv-file-input" accept=".csv" style="display: none;" />
+                    </label>
                     <button class="control-btn pause-btn" id="pause-resume-btn">
                         <span class="btn-icon">⏸️</span>
                         <span class="btn-text">Pause</span>
@@ -48,24 +25,16 @@
                         <span class="btn-icon">💾</span>
                         <span class="btn-text">Save Session</span>
                     </button>
-                    <div id="connection-status" class="status disconnected">Disconnected</div>
+                    <div id="connection-status" class="status disconnected" style="display: none;">Not Available</div>
                 </div>
             </div>
             <div id="stress-chart" class="stress-chart"></div>
             <div class="chart-info">
                 <div class="current-reading">
-                    <span class="label">Current Level:</span>
+                    <span class="label">Stress Level:</span>
                     <span id="current-stress-level" class="value">--</span>
                 </div>
                 <div class="session-stats">
-                    <div class="stat">
-                        <span class="stat-label">Average:</span>
-                        <span id="avg-stress" class="stat-value">--</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">Peak:</span>
-                        <span id="peak-stress" class="stat-value">--</span>
-                    </div>
                     <div class="stat">
                         <span class="stat-label">Duration:</span>
                         <span id="session-duration" class="stat-value">00:00</span>
@@ -103,16 +72,9 @@
                             <span class="detail-label">Duration:</span>
                             <span id="detail-duration" class="detail-value">--</span>
                         </div>
-                        <div class="detail-stat">
-                            <span class="detail-label">Average:</span>
-                            <span id="detail-average" class="detail-value">--</span>
-                        </div>
-                        <div class="detail-stat">
-                            <span class="detail-label">Peak:</span>
-                            <span id="detail-peak" class="detail-value">--</span>
-                        </div>
                     </div>
                     <div id="saved-session-chart" class="stress-chart"></div>
+                    <div id="high-stress-ranges" class="high-stress-ranges"></div>
                 </div>
             </div>
         </div>
@@ -183,87 +145,18 @@
     display: flex;
 }
 
-.date-navigation {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    max-width: 400px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    flex-shrink: 0;
-    padding: 0 10px;
-    box-sizing: border-box;
-}
-
-.nav-arrow {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--dark-grey);
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.nav-arrow:hover {
-    background: var(--greyish-purple);
-    color: var(--purple);
-}
-
-.date-display {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--black);
-    cursor: pointer;
-    flex: 1;
-    text-align: center;
-}
-
-.dropdown-arrow {
-    color: var(--purple);
-    font-size: 0.8rem;
-}
-
-.time-period-selector {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    flex-shrink: 0;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 0 10px;
-    box-sizing: border-box;
-}
-
-.period-btn {
-    padding: 8px 20px;
-    border: none;
-    background: var(--white);
-    color: var(--dark-grey);
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-}
-
-.period-btn.active {
-    background: var(--purple);
-    color: var(--white);
-}
-
-.period-btn:hover:not(.active) {
-    background: var(--greyish-purple);
-}
-
 /* Chart Container Styles */
+.chart-container.stress-high {
+    background: #fff9c4;
+    transition: background 0.3s ease;
+}
+
+.chart-container.stress-high .current-reading .label,
+.chart-container.stress-high .current-reading .value {
+    color: #c62828;
+    text-transform: uppercase;
+}
+
 .chart-container {
     background: var(--white);
     border-radius: 15px;
@@ -343,6 +236,15 @@
     background: var(--light-grey);
     color: var(--dark-grey);
     cursor: not-allowed;
+}
+
+.upload-btn {
+    background: #2196F3;
+    color: var(--white);
+}
+
+.upload-btn:hover {
+    background: #1976D2;
 }
 
 .clear-all-btn {
@@ -441,95 +343,6 @@
     font-size: 1.1rem;
     font-weight: bold;
     color: var(--black);
-}
-
-/* Date Picker Modal */
-.date-picker-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-
-.date-picker-modal.show {
-    display: flex;
-}
-
-.date-picker-content {
-    background: var(--white);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    min-width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.date-picker-content input[type="date"] {
-    width: 200px;
-    padding: 12px;
-    border: 2px solid var(--greyish-purple);
-    border-radius: 8px;
-    font-size: 1rem;
-    margin-bottom: 20px;
-    outline: none;
-    transition: border-color 0.3s ease;
-    text-align: center;
-}
-
-.date-picker-content input[type="date"]:focus {
-    border-color: var(--purple);
-}
-
-.date-picker-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
-
-.date-picker-buttons button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-#date-picker-cancel {
-    background: var(--light-grey);
-    color: var(--dark-grey);
-}
-
-#date-picker-cancel:hover {
-    background: var(--greyish-purple);
-}
-
-#date-picker-confirm {
-    background: var(--purple);
-    color: var(--white);
-}
-
-#date-picker-confirm:hover {
-    background: var(--dark-purple);
-}
-
-/* Enhanced date display cursor */
-.date-display {
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.date-display:hover {
-    color: var(--purple);
 }
 
 /* Saved Sessions Styles */
@@ -783,24 +596,87 @@
     color: var(--purple);
 }
 
+.high-stress-ranges {
+    margin-top: 15px;
+    padding: 12px;
+    background: #fff8e1;
+    border-radius: 8px;
+    border-left: 4px solid #c62828;
+}
+
+.high-stress-ranges-title {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--dark-grey);
+    margin-bottom: 8px;
+}
+
+.high-stress-ranges-list {
+    font-size: 0.9rem;
+    color: var(--black);
+}
+
+.high-stress-range-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    flex-wrap: wrap;
+}
+
+.high-stress-range-item:last-child {
+    border-bottom: none;
+}
+
+.high-stress-range-time {
+    font-weight: 500;
+    min-width: 140px;
+}
+
+.high-stress-range-faces {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.high-stress-range-category {
+    margin-left: auto;
+}
+
+.high-stress-range-faces button {
+    padding: 4px 8px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 1.3rem;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.high-stress-range-faces button:hover {
+    background: rgba(139, 92, 246, 0.15);
+}
+
+.high-stress-range-faces button.selected {
+    border-color: var(--purple);
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.stress-category-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--greyish-purple);
+    font-size: 0.85rem;
+    background: var(--white);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .mystress-content {
         padding: 10px;
         gap: 10px;
-    }
-    
-    .date-navigation {
-        gap: 15px;
-    }
-    
-    .date-display {
-        font-size: 1rem;
-    }
-    
-    .period-btn {
-        padding: 6px 15px;
-        font-size: 0.8rem;
     }
     
     .chart-container {
@@ -917,9 +793,6 @@ plotlyScript.src = 'https://cdn.plot.ly/plotly-latest.min.js';
 document.head.appendChild(plotlyScript);
 
 // Global variables
-let currentDate = new Date();
-let currentPeriod = 'day';
-
 // Chart variables
 let stressTimeData = [];
 let stressValueData = [];
@@ -932,9 +805,6 @@ let sessionStats = {
     sum: 0
 };
 
-// WebSocket connection
-let stressSocket = null;
-
 // Pause state
 let isPaused = false;
 
@@ -942,114 +812,30 @@ let isPaused = false;
 let savedSessions = [];
 let currentTab = 'live';
 
+// Streaming state for incremental plotting
+let streamingInterval = null;
+let streamingData = {
+    timeSeconds: [],
+    stressValues: [],
+    processedBands: {},
+    currentIndex: 0
+};
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     loadSavedSessions();
-    updateDateDisplay();
     initializeEventListeners();
     initializeTabListeners();
     initializePauseButton();
     initializeSaveButton();
     initializeStressChart();
-    connectToStressMonitor();
+    initializeCSVUpload();
     renderSavedSessions();
 });
 
-// Update the date display text
-function updateDateDisplay() {
-    const dateElement = document.getElementById('current-date');
-    const today = new Date();
-    
-    // Format the date based on the current period
-    if (currentPeriod === 'day') {
-        // Always show the formatted date, including "Today, Month Day" for today
-        dateElement.textContent = formatDate(currentDate);
-    } else if (currentPeriod === 'week') {
-        const weekRange = getWeekRange(currentDate);
-        dateElement.textContent = `${formatShortDate(weekRange.start)} - ${formatShortDate(weekRange.end)}`;
-    } else if (currentPeriod === 'month') {
-        dateElement.textContent = formatMonth(currentDate);
-    }
-}
-
-// Format date as "Today, Jun 3" or "Monday, Jun 3"
-function formatDate(date) {
-    const today = new Date();
-    const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    
-    if (isSameDay(date, today)) {
-        return 'Today, ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    } else {
-        return date.toLocaleDateString('en-US', options);
-    }
-}
-
-// Format short date as "Jun 3"
-function formatShortDate(date) {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-// Format month as "June 2024"
-function formatMonth(date) {
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-}
-
-// Check if two dates are the same day
-function isSameDay(date1, date2) {
-    return date1.toDateString() === date2.toDateString();
-}
-
-// Get week range (Sunday to Saturday)
-function getWeekRange(date) {
-    const start = new Date(date);
-    const day = start.getDay();
-    const diff = start.getDate() - day;
-    
-    start.setDate(diff);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
-    
-    return { start, end };
-}
-
 // Initialize all event listeners
 function initializeEventListeners() {
-    // Date navigation arrows
-    document.getElementById('prev-date').addEventListener('click', function() {
-        navigateDate(-1);
-    });
-    
-    document.getElementById('next-date').addEventListener('click', function() {
-        navigateDate(1);
-    });
-    
-    // Date display click (show date picker)
-    document.getElementById('date-display').addEventListener('click', function() {
-        showDatePicker();
-    });
-    
-    // Period buttons
-    document.querySelectorAll('.period-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            changePeriod(this.dataset.period);
-        });
-    });
-    
-    // Date picker modal
-    document.getElementById('date-picker-cancel').addEventListener('click', function() {
-        hideDatePicker();
-    });
-    
-    document.getElementById('date-picker-confirm').addEventListener('click', function() {
-        confirmDateSelection();
-    });
-    
-    // Close modal when clicking outside
-    document.getElementById('date-picker-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            hideDatePicker();
-        }
-    });
+    // No date navigation - always showing today only
 }
 
 // Initialize tab listeners
@@ -1102,82 +888,6 @@ function switchTab(tabName) {
     }
 }
 
-// Navigate date by increment based on current period
-function navigateDate(increment) {
-    if (currentPeriod === 'day') {
-        currentDate.setDate(currentDate.getDate() + increment);
-    } else if (currentPeriod === 'week') {
-        currentDate.setDate(currentDate.getDate() + (increment * 7));
-    } else if (currentPeriod === 'month') {
-        currentDate.setMonth(currentDate.getMonth() + increment);
-    }
-    
-    updateDateDisplay();
-    // Reset stress session when date changes
-    resetStressSession();
-    console.log('Date changed to:', currentDate, 'Period:', currentPeriod);
-}
-
-// Change the time period (day/week/month)
-function changePeriod(newPeriod) {
-    // Update active button
-    document.querySelectorAll('.period-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.getElementById('period-' + newPeriod).classList.add('active');
-    
-    currentPeriod = newPeriod;
-    updateDateDisplay();
-    
-    // Reset stress session when period changes
-    resetStressSession();
-    console.log('Period changed to:', currentPeriod);
-}
-
-// Show the date picker modal
-function showDatePicker() {
-    const modal = document.getElementById('date-picker-modal');
-    const datePicker = document.getElementById('date-picker');
-    
-    // Set the date picker to current date
-    datePicker.value = currentDate.toISOString().split('T')[0];
-    
-    modal.classList.add('show');
-}
-
-// Hide the date picker modal
-function hideDatePicker() {
-    const modal = document.getElementById('date-picker-modal');
-    modal.classList.remove('show');
-}
-
-// Confirm date selection from picker
-function confirmDateSelection() {
-    const datePicker = document.getElementById('date-picker');
-    const selectedDate = new Date(datePicker.value + 'T00:00:00');
-    
-    if (selectedDate && !isNaN(selectedDate.getTime())) {
-        currentDate = selectedDate;
-        updateDateDisplay();
-        hideDatePicker();
-        
-        // Reset stress session when date is manually selected
-        resetStressSession();
-        console.log('Date selected:', currentDate);
-    }
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowLeft') {
-        navigateDate(-1);
-    } else if (e.key === 'ArrowRight') {
-        navigateDate(1);
-    } else if (e.key === 'Escape') {
-        hideDatePicker();
-    }
-});
-
 // Initialize stress monitoring chart
 function initializeStressChart() {
     plotlyScript.onload = function() {
@@ -1195,7 +905,7 @@ function initializeStressChart() {
 
         const layout = {
             title: {
-                text: 'Real-time Stress Monitoring',
+                text: 'Stress Level Monitoring',
                 font: {size: 16, color: '#333'}
             },
             xaxis: {
@@ -1227,116 +937,438 @@ function initializeStressChart() {
     };
 }
 
-// Connect to stress monitoring WebSocket
-function connectToStressMonitor() {
-    const statusElement = document.getElementById('connection-status');
+// CSV parsing functions (matching SSEServer.py logic)
+function parseRow(line) {
+    // CSV line: timestamp, v1, v2, ...
+    // Skip empty lines or lines starting with "File created"
+    line = line.trim();
+    if (!line || line.startsWith("File created")) {
+        return null;
+    }
+    
+    const parts = line.split(',');
+    if (parts.length < 2) return null;
+    
+    const ts = parts[0].trim();
+    const values = parts.slice(1).map(v => {
+        const trimmed = v.trim();
+        if (!trimmed) return null;
+        const num = parseFloat(trimmed);
+        return isNaN(num) ? null : num;
+    });
+    
+    // Check if we have a valid timestamp and at least one valid numeric value
+    if (!ts || !values.some(v => v !== null && !isNaN(v))) return null;
+    
+    return { timestamp: ts, values };
+}
+
+function parseTimestampToMs(tsStr) {
+    // Normalize "YYYY-MM-DD HH:MM:SS.mmmuuu" -> "YYYY-MM-DDTHH:MM:SS.mmm"
+    const normalized = tsStr.replace(' ', 'T').replace(/\.(\d{3})\d+$/, '.$1');
+    const parsed = Date.parse(normalized);
+    return isNaN(parsed) ? null : parsed;
+}
+
+function elapsedSeconds(timestampsMs) {
+    if (!timestampsMs || !Array.isArray(timestampsMs) || !timestampsMs.length) return [];
+    const t0 = timestampsMs[0];
+    return timestampsMs.map(t => (t - t0) / 1000);
+}
+
+// Precomputed SciPy butter(4, band, fs=256, output='sos') coefficients (from plot_csv_sse_v2.html)
+// Each row: [b0, b1, b2, a0, a1, a2]
+const SOS_MAP = {
+    delta: [
+        [3.049431e-06, 6.098862e-06, 3.049431e-06, 1.0, -1.870149771975, 0.875842589569],
+        [1.0, 2.0, 1.0, 1.0, -1.934664050576, 0.943586791437],
+        [1.0, -2.0, 1.0, 1.0, -1.97380955467, 0.974045607595],
+        [1.0, -2.0, 1.0, 1.0, -1.992248504568, 0.992405879962],
+    ],
+    alpha: [
+        [1.2134333e-05, 2.4268666e-05, 1.2134333e-05, 1.0, -1.812006276821, 0.883140501637],
+        [1.0, 2.0, 1.0, 1.0, -1.853236722842, 0.902229612842],
+        [1.0, -2.0, 1.0, 1.0, -1.849664736864, 0.944535265517],
+        [1.0, -2.0, 1.0, 1.0, -1.924909923565, 0.963969676428],
+    ],
+    beta: [
+        [0.001159024932, 0.002318049864, 0.001159024932, 1.0, -1.360825895842, 0.631413287771],
+        [1.0, 2.0, 1.0, 1.0, -1.580273251141, 0.720901252756],
+        [1.0, -2.0, 1.0, 1.0, -1.362661520584, 0.810386425508],
+        [1.0, -2.0, 1.0, 1.0, -1.801507804674, 0.902634931661],
+    ],
+};
+
+// Configuration matching plot_csv_sse_v2.html
+const FS = 256; // Hz
+const BANDS = {
+    delta: { low: 0.5, high: 4, color: '#1565c0' },
+    alpha: { low: 8, high: 13, color: '#2e7d32' },
+    beta:  { low: 13, high: 30, color: '#c62828' },
+};
+
+function filtfilt(data, sos) {
+    // Forward-backward filtering using IIRFilter + biquad cascade (from plot_csv_sse_v2.html)
+    const forward = applySOS(data, sos);
+    const reversed = forward.slice().reverse();
+    const backward = applySOS(reversed, sos);
+    return backward.reverse();
+}
+
+function applySOS(data, sos) {
+    // sos: array of [b0,b1,b2,a0,a1,a2] (from plot_csv_sse_v2.html)
+    let y = data.slice();
+    sos.forEach(([b0,b1,b2,a0,a1,a2]) => {
+        // Direct Form II Transposed
+        let z1 = 0, z2 = 0;
+        const out = new Array(y.length);
+        for (let i = 0; i < y.length; i++) {
+            const x = y[i];
+            const y0 = b0*x + z1;
+            z1 = b1*x - a1*y0 + z2;
+            z2 = b2*x - a2*y0;
+            out[i] = y0;
+        }
+        y = out;
+    });
+    return y;
+}
+
+function zscore(arr) {
+    // Z-score normalization (from plot_csv_sse_v2.html)
+    const n = arr.length;
+    if (!n) return [];
+    const mean = arr.reduce((s, v) => s + v, 0) / n;
+    const std = Math.sqrt(arr.reduce((s, v) => s + (v - mean) * (v - mean), 0) / n) || 1;
+    return arr.map(v => (v - mean) / std);
+}
+
+// Initialize CSV file upload
+function initializeCSVUpload() {
+    const fileInput = document.getElementById('csv-file-input');
+    if (!fileInput) return;
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const text = event.target.result;
+                const lines = text.split(/\r?\n/).filter(Boolean);
+                const rows = [];
+                
+                // Parse CSV rows using same logic as SSEServer.py
+                for (const line of lines) {
+                    const parsed = parseRow(line);
+                    if (parsed) {
+                        rows.push(parsed);
+                    }
+                }
+                
+                if (rows.length === 0) {
+                    alert('No valid data found in CSV file. Please check the file format.');
+                    return;
+                }
+                
+                // Process CSV data and update chart
+                processCSVData(rows);
+                
+                console.log(`Loaded ${rows.length} rows from CSV file`);
+            } catch (error) {
+                console.error('Error reading CSV file:', error);
+                alert('Error reading CSV file: ' + error.message);
+            }
+        };
+        
+        reader.onerror = function() {
+            alert('Error reading file');
+        };
+        
+        reader.readAsText(file);
+    });
+}
+
+// Process CSV data and update stress chart with simulated-live streaming
+function processCSVData(rows) {
+    // Reset session data
+    resetStressSession();
+    
+    // Stop any existing streaming
+    if (streamingInterval) {
+        clearInterval(streamingInterval);
+        streamingInterval = null;
+    }
+    
+    if (rows.length === 0) {
+        alert('No valid data found in CSV file.');
+        return;
+    }
     
     try {
-        // Use the same WebSocket server as the RandomNumGenerator
-        // stressSocket = new WebSocket('ws://192.168.0.24:8000');
-        stressSocket = new WebSocket('ws://127.0.0.1:8000:8000');
+        // Validate rows structure
+        if (!rows || !Array.isArray(rows) || rows.length === 0) {
+            alert('Invalid CSV data format.');
+            return;
+        }
         
-        stressSocket.onopen = function() {
-            console.log('Connected to stress monitoring server.');
-            statusElement.textContent = 'Connected';
-            statusElement.className = 'status connected';
-            updateSessionDuration();
-        };
-
-        stressSocket.onmessage = function(event) {
-            console.log('Stress data received:', event.data);
-            
-            // Skip processing if paused
-            if (isPaused) {
-                console.log('Data collection paused - ignoring incoming data');
-                return;
-            }
-            
-            // Parse the data (string of numbers separated by spaces)
-            const numbers = event.data.split(' ').map(num => parseFloat(num)).filter(num => !isNaN(num));
-            
-            if (numbers.length > 0) {
-                // Process each stress level reading with time spacing
-                numbers.forEach((value, index) => {
-                    // Add time offset so points don't stack vertically
-                    setTimeout(() => {
-                        addStressDataPoint(value);
-                        updateStressChart();
-                        updateStressStats();
-                    }, index * 50); // Spread points 50ms apart
-                });
-            }
-        };
-
-        stressSocket.onerror = function(error) {
-            console.error('WebSocket error:', error);
-            statusElement.textContent = 'Connection Error';
-            statusElement.className = 'status disconnected';
-        };
-
-        stressSocket.onclose = function() {
-            console.log('Stress monitoring connection closed.');
-            statusElement.textContent = 'Disconnected';
-            statusElement.className = 'status disconnected';
-            
-            // Attempt to reconnect after 5 seconds
-            setTimeout(connectToStressMonitor, 5000);
-        };
+        // Filter rows to only include those with valid structure
+        const validRows = rows.filter(r => 
+            r && 
+            r.values && 
+            Array.isArray(r.values) && 
+            r.values.length > 0 &&
+            r.timestamp
+        );
         
-    } catch (error) {
-        console.error('Failed to connect to stress monitor:', error);
-        statusElement.textContent = 'Connection Failed';
-        statusElement.className = 'status disconnected';
-    }
-}
-
-// Add a new stress data point
-function addStressDataPoint(value) {
-    const currentTime = Math.floor((Date.now() - sessionStartTime) / 1000); // Convert to whole seconds
-    
-    stressTimeData.push(currentTime);
-    stressValueData.push(value);
-    
-    // Update session stats
-    sessionStats.current = value;
-    sessionStats.count++;
-    sessionStats.sum += value;
-    sessionStats.average = sessionStats.sum / sessionStats.count;
-    sessionStats.peak = Math.max(sessionStats.peak, value);
-    
-    // Keep only last 100 data points for performance
-    if (stressTimeData.length > 100) {
-        stressTimeData.shift();
-        stressValueData.shift();
-    }
-    
-    // Update save button state
-    updateSaveButtonState();
-}
-
-// Update the stress chart
-function updateStressChart() {
-    if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
-        Plotly.update('stress-chart', {
-            x: [stressTimeData],
-            y: [stressValueData]
+        if (validRows.length === 0) {
+            alert('No valid rows found in CSV file.');
+            return;
+        }
+        
+        // Extract stress values from CSV using the same filtered rows
+        // Using first value column (index 0) - adjust if needed for your data format
+        const stressValues = validRows
+            .map(r => r.values[0])
+            .filter(v => v !== null && v !== undefined && !isNaN(v));
+        
+        if (stressValues.length === 0) {
+            alert('No valid numeric values found in CSV file.');
+            return;
+        }
+        
+        // Parse timestamps using the same filtered rows (keep same length)
+        const tsMsRaw = validRows.map(r => parseTimestampToMs(r.timestamp));
+        const tsMs = tsMsRaw.filter(t => t !== null && t !== undefined);
+        
+        let timeSeconds;
+        if (tsMs.length === stressValues.length && tsMs.length > 0 && Array.isArray(tsMs)) {
+            // Use actual timestamps
+            timeSeconds = elapsedSeconds(tsMs);
+        } else {
+            // Fallback: use index-based time (matching plot_csv_sse_v2.html: fs=256 Hz)
+            timeSeconds = [...Array(stressValues.length).keys()].map(i => i / FS);
+        }
+        
+        // Ensure arrays have same length
+        if (stressValues.length !== timeSeconds.length) {
+            // Trim to shortest array
+            const minLength = Math.min(stressValues.length, timeSeconds.length);
+            stressValues.splice(minLength);
+            timeSeconds.splice(minLength);
+        }
+        
+        // Validate arrays before proceeding
+        if (!stressValues.length || !timeSeconds.length) {
+            alert('Could not process CSV data - invalid array lengths.');
+            return;
+        }
+        
+        // Pre-process all data for streaming (matching plot_csv_sse_v2.html approach exactly)
+        const N = stressValues.length;
+        const sig = stressValues; // Signal data (column 1 per requirement, matching plot_csv_sse_v2.html)
+        const tSec = timeSeconds; // Time in seconds
+        
+        // Pre-process all filtered signals (matching plot_csv_sse_v2.html exactly)
+        const processedBands = {};
+        Object.entries(BANDS).forEach(([name, cfg]) => {
+            const sos = SOS_MAP[name];
+            if (!sos) throw new Error(`No SOS for band ${name}`);
+            const filtered = filtfilt(sig, sos);
+            const normed = zscore(filtered);
+            processedBands[name] = normed;
         });
         
-        // Auto-scale the x-axis to show recent data
-        if (stressTimeData.length > 20) {
-            const recentTimes = stressTimeData.slice(-50);
-            Plotly.relayout('stress-chart', {
-                'xaxis.range': [recentTimes[0], recentTimes[recentTimes.length - 1]]
+        // Calculate the full x-axis range based on file size
+        const minT = 0;
+        const maxT = tSec.length > 0 ? tSec[tSec.length - 1] : 1;
+        
+        // Calculate the full y-axis range from all processed bands (matching plot_csv_sse_v2.html)
+        const allYValues = [
+            ...processedBands.delta,
+            ...processedBands.alpha,
+            ...processedBands.beta
+        ];
+        const minY = Math.min(...allYValues);
+        const maxY = Math.max(...allYValues);
+        const yPadding = (maxY - minY) * 0.1; // 10% padding
+        const yMin = minY - yPadding;
+        const yMax = maxY + yPadding;
+        
+        // Initialize plot with empty traces (matching plot_csv_sse_v2.html - one trace per band)
+        const traces = [];
+        Object.entries(BANDS).forEach(([name, cfg]) => {
+            traces.push({
+                x: [],
+                y: [],
+                type: 'scatter',
+                mode: 'lines',
+                name: name,
+                line: { width: 1.5, color: cfg.color },
+            });
+        });
+
+        const layout = {
+            title: {
+                text: 'Stress Level Monitoring',
+                font: {size: 16, color: '#333'}
+            },
+            xaxis: {
+                title: 'Time (seconds)',
+                gridcolor: '#f0f0f0',
+                showgrid: true,
+                range: [minT, maxT]  // Fixed range to full file size
+            },
+            yaxis: {
+                title: 'Z-score',
+                gridcolor: '#f0f0f0',
+                showgrid: true,
+                range: [yMin, yMax]  // Fixed range based on all data
+            },
+            showlegend: true,
+            legend: { x: 1, y: 1, xanchor: 'right', yanchor: 'bottom', orientation: 'v' },
+            margin: {l: 60, r: 100, t: 50, b: 70},
+            plot_bgcolor: 'white',
+            paper_bgcolor: 'white'
+        };
+
+        if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+            Plotly.newPlot('stress-chart', traces, layout, {
+                responsive: true,
+                displayModeBar: false,
+                staticPlot: false,
+                scrollZoom: false
             });
         }
+        
+        // Store pre-processed band data for streaming
+        streamingData.timeSeconds = tSec;
+        streamingData.processedBands = processedBands;
+        streamingData.currentIndex = 0;
+        
+        // Start incremental streaming matching plot_csv_sse_v2.html timing (50ms per point = 20 points/second)
+        startIncrementalStreaming(processedBands, tSec);
+        
+    } catch (error) {
+        console.error('Error processing CSV data:', error);
+        alert('Error processing CSV data: ' + error.message);
     }
+}
+
+// Start incremental streaming of data points (matching plot_csv_sse_v2.html logic exactly)
+function startIncrementalStreaming(processedBands, timeSeconds) {
+    const N = processedBands.delta.length; // All bands have same length
+    let currentIndex = 0;
+    
+    // Calculate stats from delta band (or combine all bands)
+    const allValues = [
+        ...processedBands.delta,
+        ...processedBands.alpha,
+        ...processedBands.beta
+    ];
+    
+    // Update stats as we stream (will be finalized at end)
+    sessionStats.count = N;
+    sessionStats.sum = processedBands.delta.reduce((a, b) => a + b, 0);
+    sessionStats.average = sessionStats.sum / sessionStats.count;
+    sessionStats.peak = Math.max(...processedBands.delta);
+    
+    // Calculate duration from x-axis time range (matches the timeSeconds array)
+    const totalDurationSeconds = timeSeconds.length > 0 ? timeSeconds[timeSeconds.length - 1] : 0;
+    sessionStartTime = Date.now() - (totalDurationSeconds * 1000);
+    
+    // Stream points one at a time at 70 points per second (14ms per point)
+    streamingInterval = setInterval(() => {
+        if (currentIndex >= N) {
+            // Streaming complete
+            clearInterval(streamingInterval);
+            streamingInterval = null;
+            
+            // Finalize data arrays (store delta band for stress level display)
+            stressTimeData = [...timeSeconds];
+            stressValueData = [...processedBands.delta];
+            
+            // Update final statistics
+            updateStressStats();
+            updateSaveButtonState();
+            
+            // Update session duration to match x-axis time range
+            const durationSeconds = Math.floor(totalDurationSeconds);
+            const minutes = Math.floor(durationSeconds / 60);
+            const seconds = durationSeconds % 60;
+            document.getElementById('session-duration').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            console.log(`Finished streaming ${N} data points`);
+            return;
+        }
+        
+        // Skip if paused
+        if (isPaused) {
+            return;
+        }
+        
+        // Extend each trace with the next point (matching plot_csv_sse_v2.html extendTraces pattern exactly)
+        if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+            const xValues = [
+                [timeSeconds[currentIndex]], 
+                [timeSeconds[currentIndex]], 
+                [timeSeconds[currentIndex]]
+            ];
+            const yValues = [
+                [processedBands.delta[currentIndex]],
+                [processedBands.alpha[currentIndex]],
+                [processedBands.beta[currentIndex]]
+            ];
+            
+            Plotly.extendTraces('stress-chart', {
+                x: xValues,
+                y: yValues
+            }, [0, 1, 2]); // Update all three traces
+            
+            // Keep x-axis fixed to full file range (no sliding window) - matching plot_csv_sse_v2.html
+        }
+        
+        // Update current stress level as we stream (using delta band)
+        sessionStats.current = processedBands.delta[currentIndex];
+        updateStressLevelDisplay(sessionStats.current);
+        
+        currentIndex++;
+        streamingData.currentIndex = currentIndex;
+    }, 25); 
+}
+
+
+// Format stress level display: Low (< 0.3), Moderate (0.3–0.7), High (> 0.7)
+function formatStressLevel(value) {
+    if (value === null || value === undefined || isNaN(value)) {
+        return '--';
+    }
+    if (value < 0.3) return 'Low';
+    if (value <= 0.7) return 'Moderate';
+    return 'High';
+}
+
+// Update stress level display; yellow background and red caps label while High
+function updateStressLevelDisplay(value) {
+    const displayValue = formatStressLevel(value);
+    const chartContainer = document.querySelector('.chart-container');
+    
+    if (chartContainer) {
+        if (displayValue === 'High') {
+            chartContainer.classList.add('stress-high');
+        } else {
+            chartContainer.classList.remove('stress-high');
+        }
+    }
+    
+    document.getElementById('current-stress-level').textContent = displayValue;
 }
 
 // Update stress statistics display
 function updateStressStats() {
-    document.getElementById('current-stress-level').textContent = sessionStats.current.toFixed(1);
-    document.getElementById('avg-stress').textContent = sessionStats.average.toFixed(1);
-    document.getElementById('peak-stress').textContent = sessionStats.peak.toFixed(1);
+    updateStressLevelDisplay(sessionStats.current);
 }
 
 // Update session duration
@@ -1350,15 +1382,16 @@ function updateSessionDuration() {
         document.getElementById('session-duration').textContent = 
             `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
-    
-    // Update every second if connected
-    if (stressSocket && stressSocket.readyState === WebSocket.OPEN) {
-        setTimeout(updateSessionDuration, 1000);
-    }
 }
 
 // Reset session data when period changes
 function resetStressSession() {
+    // Stop any active streaming
+    if (streamingInterval) {
+        clearInterval(streamingInterval);
+        streamingInterval = null;
+    }
+    
     stressTimeData = [];
     stressValueData = [];
     sessionStartTime = Date.now();
@@ -1370,6 +1403,13 @@ function resetStressSession() {
         sum: 0
     };
     
+    streamingData = {
+        timeSeconds: [],
+        stressValues: [],
+        processedBands: {},
+        currentIndex: 0
+    };
+    
     // Clear the chart
     if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
         Plotly.update('stress-chart', {
@@ -1379,9 +1419,8 @@ function resetStressSession() {
     }
     
     // Reset stats display
+    document.querySelector('.chart-container')?.classList.remove('stress-high');
     document.getElementById('current-stress-level').textContent = '--';
-    document.getElementById('avg-stress').textContent = '--';
-    document.getElementById('peak-stress').textContent = '--';
     document.getElementById('session-duration').textContent = '00:00';
     
     // Reset pause state
@@ -1402,24 +1441,19 @@ function togglePause() {
     updatePauseButton();
     
     if (isPaused) {
-        console.log('Data collection paused');
+        console.log('Data streaming paused');
         // Update chart title to show paused state
         if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
             Plotly.relayout('stress-chart', {
-                'title.text': 'Real-time Stress Monitoring (PAUSED)'
+                'title.text': 'Stress Level Monitoring (PAUSED)'
             });
         }
     } else {
-        console.log('Data collection resumed');
-        // Reset session start time to account for pause duration
-        const currentTime = Date.now();
-        const pauseDuration = currentTime - sessionStartTime - (stressTimeData.length * 1000); // Approximate
-        sessionStartTime = currentTime - (stressTimeData.length * 1000);
-        
+        console.log('Data streaming resumed');
         // Update chart title to show resumed state
         if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
             Plotly.relayout('stress-chart', {
-                'title.text': 'Real-time Stress Monitoring'
+                'title.text': 'Stress Level Monitoring'
             });
         }
     }
@@ -1563,14 +1597,6 @@ function createSessionCard(session, index) {
                 <div class="session-card-stat-value">${duration}</div>
             </div>
             <div class="session-card-stat">
-                <div class="session-card-stat-label">Avg Stress</div>
-                <div class="session-card-stat-value">${session.stats.average.toFixed(1)}</div>
-            </div>
-            <div class="session-card-stat">
-                <div class="session-card-stat-label">Peak Stress</div>
-                <div class="session-card-stat-value">${session.stats.peak.toFixed(1)}</div>
-            </div>
-            <div class="session-card-stat">
                 <div class="session-card-stat-label">Data Points</div>
                 <div class="session-card-stat-value">${session.stats.count}</div>
             </div>
@@ -1614,8 +1640,6 @@ function viewSessionDetail(session) {
     // Update stats
     document.getElementById('detail-date').textContent = session.dateFormatted;
     document.getElementById('detail-duration').textContent = formatDuration(session.duration);
-    document.getElementById('detail-average').textContent = session.stats.average.toFixed(1);
-    document.getElementById('detail-peak').textContent = session.stats.peak.toFixed(1);
     
     // Show the modal
     detailView.style.display = 'flex';
@@ -1631,6 +1655,38 @@ function viewSessionDetail(session) {
             renderSessionChart(session);
         };
     }
+}
+
+// Find contiguous time ranges where stress is High (value > 0.7)
+function getHighStressRanges(timeData, valueData) {
+    const ranges = [];
+    const HIGH_THRESHOLD = 0.7;
+    if (!timeData || !valueData || timeData.length !== valueData.length || timeData.length === 0) {
+        return ranges;
+    }
+    let inRange = false;
+    let startIdx = 0;
+    for (let i = 0; i < valueData.length; i++) {
+        const v = valueData[i];
+        const isHigh = v !== null && v !== undefined && !isNaN(v) && v > HIGH_THRESHOLD;
+        if (isHigh && !inRange) {
+            inRange = true;
+            startIdx = i;
+        } else if (!isHigh && inRange) {
+            inRange = false;
+            ranges.push({
+                start: timeData[startIdx],
+                end: timeData[i - 1]
+            });
+        }
+    }
+    if (inRange) {
+        ranges.push({
+            start: timeData[startIdx],
+            end: timeData[timeData.length - 1]
+        });
+    }
+    return ranges;
 }
 
 // Render session chart
@@ -1656,15 +1712,13 @@ function renderSessionChart(session) {
             title: 'Time (seconds)',
             gridcolor: '#f0f0f0',
             showgrid: true,
-            tickformat: 'd',
-            dtick: 1
+            nticks: 6
         },
         yaxis: {
             title: 'Stress Level',
-            range: [0, 100],
+            range: [-8, 8],
             gridcolor: '#f0f0f0',
-            showgrid: true,
-            dtick: 1
+            showgrid: true
         },
         showlegend: false,
         margin: {l: 60, r: 30, t: 50, b: 70},
@@ -1678,6 +1732,76 @@ function renderSessionChart(session) {
         staticPlot: false,
         scrollZoom: false
     });
+
+    // Show high-stress time ranges under the chart (date/time labels)
+    const ranges = getHighStressRanges(session.timeData, session.valueData);
+    const rangesEl = document.getElementById('high-stress-ranges');
+    if (ranges.length === 0) {
+        rangesEl.innerHTML = '<div class="high-stress-ranges-title">High stress periods</div><div class="high-stress-ranges-list">None</div>';
+    } else {
+        if (!session.stressRangeLabels) session.stressRangeLabels = [];
+        const sessionStartMs = new Date(session.date).getTime() - (session.duration || 0) * 1000;
+        const opts = { hour: 'numeric', minute: '2-digit', second: '2-digit' };
+        const listHtml = ranges.map((r, idx) => {
+            const startMs = sessionStartMs + (typeof r.start === 'number' ? r.start : parseFloat(r.start)) * 1000;
+            const endMs = sessionStartMs + (typeof r.end === 'number' ? r.end : parseFloat(r.end)) * 1000;
+            const startStr = new Date(startMs).toLocaleTimeString('en-US', opts);
+            const endStr = new Date(endMs).toLocaleTimeString('en-US', opts);
+            const labels = session.stressRangeLabels[idx] || {};
+            const typeVal = labels.type || '';
+            const categoryVal = labels.category || '';
+            const goodSelected = typeVal === 'good stress';
+            const badSelected = typeVal === 'bad stress';
+            return `<div class="high-stress-range-item" data-session-id="${session.id}" data-range-index="${idx}">
+                <div class="high-stress-range-time">${startStr} – ${endStr}</div>
+                <div class="high-stress-range-faces">
+                    <button type="button" class="stress-face-btn" data-value="good stress" title="Good stress"${goodSelected ? ' data-selected' : ''}>😊</button>
+                    <button type="button" class="stress-face-btn" data-value="bad stress" title="Bad stress"${badSelected ? ' data-selected' : ''}>😢</button>
+                </div>
+                <div class="high-stress-range-category">
+                    <select class="stress-category-select">
+                        <option value="">Select category...</option>
+                        <option value="homework"${categoryVal === 'homework' ? ' selected' : ''}>Homework</option>
+                        <option value="physical stress"${categoryVal === 'physical stress' ? ' selected' : ''}>Physical stress</option>
+                        <option value="etc"${categoryVal === 'etc' ? ' selected' : ''}>Etc</option>
+                    </select>
+                </div>
+            </div>`;
+        }).join('');
+        rangesEl.innerHTML = '<div class="high-stress-ranges-title">High stress periods</div><div class="high-stress-ranges-list">' + listHtml + '</div>';
+        rangesEl.querySelectorAll('.stress-face-btn[data-selected]').forEach(btn => btn.classList.add('selected'));
+        rangesEl.querySelectorAll('.stress-face-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const item = this.closest('.high-stress-range-item');
+                const sid = parseInt(item.dataset.sessionId, 10);
+                const idx = parseInt(item.dataset.rangeIndex, 10);
+                const val = this.dataset.value;
+                const s = savedSessions.find(x => x.id === sid);
+                if (s && !s.stressRangeLabels) s.stressRangeLabels = [];
+                if (s) {
+                    s.stressRangeLabels[idx] = s.stressRangeLabels[idx] || {};
+                    s.stressRangeLabels[idx].type = val;
+                    saveSessions();
+                }
+                item.querySelectorAll('.stress-face-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        rangesEl.querySelectorAll('.stress-category-select').forEach(sel => {
+            sel.addEventListener('change', function() {
+                const item = this.closest('.high-stress-range-item');
+                const sid = parseInt(item.dataset.sessionId, 10);
+                const idx = parseInt(item.dataset.rangeIndex, 10);
+                const s = savedSessions.find(x => x.id === sid);
+                if (s && !s.stressRangeLabels) s.stressRangeLabels = [];
+                if (s) {
+                    s.stressRangeLabels[idx] = s.stressRangeLabels[idx] || {};
+                    s.stressRangeLabels[idx].category = this.value;
+                    saveSessions();
+                }
+            });
+        });
+    }
 }
 
 // Close session detail view
