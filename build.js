@@ -26,7 +26,6 @@ if (!fs.existsSync(BUILD_DIR)) {
 // Theme definitions
 const themes = {
     purple: {
-        gradient: 'linear-gradient(180deg, #4a148c 0%, #6a1b9a 25%, #8e24aa 50%, #ab47bc 75%, #ce93d8 100%)',
         mountain1Start: '#311b92',
         mountain1End: '#512da8',
         mountain2Start: '#512da8', 
@@ -36,7 +35,6 @@ const themes = {
         overlay: 'linear-gradient(45deg, rgba(156, 39, 176, 0.3) 0%, rgba(103, 58, 183, 0.2) 50%, rgba(63, 81, 181, 0.1) 100%)'
     },
     green: {
-        gradient: 'linear-gradient(180deg, #1b5e20 0%, #2e7d32 25%, #388e3c 50%, #4caf50 75%, #81c784 100%)',
         mountain1Start: '#0d4f0c',
         mountain1End: '#1b5e20',
         mountain2Start: '#1b5e20',
@@ -46,7 +44,6 @@ const themes = {
         overlay: 'linear-gradient(45deg, rgba(27, 94, 32, 0.3) 0%, rgba(46, 125, 50, 0.2) 50%, rgba(56, 142, 60, 0.1) 100%)'
     },
     blue: {
-        gradient: 'linear-gradient(180deg, #0d47a1 0%, #1565c0 25%, #1976d2 50%, #2196f3 75%, #64b5f6 100%)',
         mountain1Start: '#0a3d91',
         mountain1End: '#0d47a1',
         mountain2Start: '#0d47a1',
@@ -56,7 +53,6 @@ const themes = {
         overlay: 'linear-gradient(45deg, rgba(13, 71, 161, 0.3) 0%, rgba(21, 101, 192, 0.2) 50%, rgba(25, 118, 210, 0.1) 100%)'
     },
     red: {
-        gradient: 'linear-gradient(180deg, #b71c1c 0%, #c62828 25%, #d32f2f 50%, #e91e63 75%, #f48fb1 100%)',
         mountain1Start: '#8e0000',
         mountain1End: '#b71c1c',
         mountain2Start: '#b71c1c',

@@ -634,6 +634,14 @@
     min-width: 140px;
 }
 
+.high-stress-range-label {
+    font-size: 0.85rem;
+    color: var(--dark-grey);
+    font-style: italic;
+    margin-bottom: 4px;
+    width: 100%;
+}
+
 .high-stress-range-faces {
     flex: 1;
     display: flex;
@@ -1741,7 +1749,7 @@ function renderSessionChart(session) {
     } else {
         if (!session.stressRangeLabels) session.stressRangeLabels = [];
         const sessionStartMs = new Date(session.date).getTime() - (session.duration || 0) * 1000;
-        const opts = { hour: 'numeric', minute: '2-digit', second: '2-digit' };
+        const opts = { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
         const listHtml = ranges.map((r, idx) => {
             const startMs = sessionStartMs + (typeof r.start === 'number' ? r.start : parseFloat(r.start)) * 1000;
             const endMs = sessionStartMs + (typeof r.end === 'number' ? r.end : parseFloat(r.end)) * 1000;
@@ -1750,20 +1758,39 @@ function renderSessionChart(session) {
             const labels = session.stressRangeLabels[idx] || {};
             const typeVal = labels.type || '';
             const categoryVal = labels.category || '';
-            const goodSelected = typeVal === 'good stress';
-            const badSelected = typeVal === 'bad stress';
+            const verySadSelected = typeVal === 'very sad';
+            const sadSelected = typeVal === 'sad';
+            const neutralSelected = typeVal === 'neutral';
+            const happySelected = typeVal === 'happy';
+            const veryHappySelected = typeVal === 'very happy';
             return `<div class="high-stress-range-item" data-session-id="${session.id}" data-range-index="${idx}">
                 <div class="high-stress-range-time">${startStr} – ${endStr}</div>
+                <div class="high-stress-range-label">How were you feeling during this time?</div>
                 <div class="high-stress-range-faces">
-                    <button type="button" class="stress-face-btn" data-value="good stress" title="Good stress"${goodSelected ? ' data-selected' : ''}>😊</button>
-                    <button type="button" class="stress-face-btn" data-value="bad stress" title="Bad stress"${badSelected ? ' data-selected' : ''}>😢</button>
+                    <button type="button" class="stress-face-btn" data-value="very sad" title="Very Sad"${verySadSelected ? ' data-selected' : ''}>😢</button>
+                    <button type="button" class="stress-face-btn" data-value="sad" title="Sad"${sadSelected ? ' data-selected' : ''}>🙁</button>
+                    <button type="button" class="stress-face-btn" data-value="neutral" title="Neutral"${neutralSelected ? ' data-selected' : ''}>😐</button>
+                    <button type="button" class="stress-face-btn" data-value="happy" title="Happy"${happySelected ? ' data-selected' : ''}>🙂</button>
+                    <button type="button" class="stress-face-btn" data-value="very happy" title="Very Happy"${veryHappySelected ? ' data-selected' : ''}>😄</button>
                 </div>
                 <div class="high-stress-range-category">
                     <select class="stress-category-select">
                         <option value="">Select category...</option>
                         <option value="homework"${categoryVal === 'homework' ? ' selected' : ''}>Homework</option>
-                        <option value="physical stress"${categoryVal === 'physical stress' ? ' selected' : ''}>Physical stress</option>
-                        <option value="etc"${categoryVal === 'etc' ? ' selected' : ''}>Etc</option>
+                        <option value="exam"${categoryVal === 'exam' ? ' selected' : ''}>Exam/Test</option>
+                        <option value="work"${categoryVal === 'work' ? ' selected' : ''}>Work</option>
+                        <option value="social"${categoryVal === 'social' ? ' selected' : ''}>Social Interaction</option>
+                        <option value="family"${categoryVal === 'family' ? ' selected' : ''}>Family</option>
+                        <option value="relationship"${categoryVal === 'relationship' ? ' selected' : ''}>Relationship</option>
+                        <option value="physical stress"${categoryVal === 'physical stress' ? ' selected' : ''}>Physical Stress</option>
+                        <option value="exercise"${categoryVal === 'exercise' ? ' selected' : ''}>Exercise</option>
+                        <option value="financial"${categoryVal === 'financial' ? ' selected' : ''}>Financial</option>
+                        <option value="health"${categoryVal === 'health' ? ' selected' : ''}>Health</option>
+                        <option value="deadline"${categoryVal === 'deadline' ? ' selected' : ''}>Deadline Pressure</option>
+                        <option value="presentation"${categoryVal === 'presentation' ? ' selected' : ''}>Presentation/Speech</option>
+                        <option value="travel"${categoryVal === 'travel' ? ' selected' : ''}>Travel</option>
+                        <option value="sleep"${categoryVal === 'sleep' ? ' selected' : ''}>Sleep Deprivation</option>
+                        <option value="other"${categoryVal === 'other' ? ' selected' : ''}>Other</option>
                     </select>
                 </div>
             </div>`;
