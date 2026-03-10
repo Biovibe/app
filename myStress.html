@@ -812,7 +812,12 @@ let isPaused = false;
 let savedSessions = [];
 let currentTab = 'live';
 
-// Streaming state for incremental plotting
+// WebSocket live streaming
+let liveWs = null;
+let liveStreamingActive = false;
+let liveStreamingEnabled = true;
+
+// Streaming state for incremental plotting (CSV playback)
 let streamingInterval = null;
 let streamingData = {
     timeSeconds: [],
@@ -830,6 +835,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSaveButton();
     initializeStressChart();
     initializeCSVUpload();
+    initializeLiveStreaming();
     renderSavedSessions();
 });
 
@@ -935,6 +941,143 @@ function initializeStressChart() {
             scrollZoom: false
         });
     };
+}
+
+// Live WebSocket streaming from DataSocketServer.py
+function initializeLiveStreaming() {
+    const statusEl = document.getElementById('connection-status');
+    if (statusEl) {
+        statusEl.style.display = 'inline-flex';
+    }
+    connectToLiveStream();
+}
+
+function setConnectionStatus(state, message) {
+    const statusEl = document.getElementById('connection-status');
+    if (!statusEl) return;
+
+    statusEl.classList.remove('connected', 'disconnected');
+
+    if (state === 'connected') {
+        statusEl.classList.add('connected');
+        statusEl.textContent = message || 'Live';
+    } else {
+        statusEl.classList.add('disconnected');
+        statusEl.textContent = message || 'Not Available';
+    }
+}
+
+function connectToLiveStream() {
+    if (!liveStreamingEnabled) {
+        setConnectionStatus('disconnected', 'CSV Playback');
+        return;
+    }
+
+    if (liveWs && (liveWs.readyState === WebSocket.OPEN || liveWs.readyState === WebSocket.CONNECTING)) {
+        return;
+    }
+
+    const url = `ws://${"192.168.0.30"}:8000`;
+    setConnectionStatus('disconnected', 'Connecting...');
+
+    try {
+        liveWs = new WebSocket(url);
+    } catch (err) {
+        console.error('WebSocket creation failed:', err);
+        setConnectionStatus('disconnected', 'Error');
+        return;
+    }
+
+    liveWs.onopen = () => {
+        liveStreamingActive = true;
+        resetStressSession();
+        setConnectionStatus('connected', 'Live');
+        console.log('Connected to EEG WebSocket at', url);
+    };
+
+    liveWs.onmessage = handleLiveMessage;
+
+    liveWs.onerror = (event) => {
+        console.error('WebSocket error:', event);
+        liveStreamingActive = false;
+        setConnectionStatus('disconnected', 'Error');
+    };
+
+    liveWs.onclose = () => {
+        liveStreamingActive = false;
+        if (liveStreamingEnabled) {
+            setConnectionStatus('disconnected', 'Disconnected');
+        } else {
+            setConnectionStatus('disconnected', 'CSV Playback');
+        }
+    };
+}
+
+function stopLiveStreaming() {
+    liveStreamingActive = false;
+    if (liveWs && liveWs.readyState === WebSocket.OPEN) {
+        liveWs.close();
+    }
+    setConnectionStatus('disconnected', 'CSV Playback');
+}
+
+function handleLiveMessage(event) {
+    if (!liveStreamingActive || isPaused) return;
+    if (!event || typeof event.data !== 'string') return;
+
+    const raw = event.data.trim();
+    if (!raw) return;
+
+    const parts = raw.split('|');
+    if (parts.length < 2) return;
+
+    const valuesStr = parts[1].trim();
+    if (!valuesStr) return;
+
+    const values = valuesStr.split(/\s+/).map(Number).filter(v => !isNaN(v));
+    if (!values.length) return;
+
+    const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
+
+    const lastT = stressTimeData.length ? stressTimeData[stressTimeData.length - 1] : 0;
+    const t = stressTimeData.length ? lastT + 0.1 : 0;
+
+    stressTimeData.push(t);
+    stressValueData.push(avg);
+
+    const MAX_POINTS = 300;
+    if (stressTimeData.length > MAX_POINTS) {
+        stressTimeData.shift();
+        stressValueData.shift();
+    }
+
+    sessionStats.current = avg;
+    sessionStats.count += 1;
+    sessionStats.sum += avg;
+    sessionStats.average = sessionStats.sum / sessionStats.count;
+    sessionStats.peak = sessionStats.count === 1 ? avg : Math.max(sessionStats.peak, avg);
+
+    if (sessionStats.count === 1) {
+        sessionStartTime = Date.now();
+    }
+
+    if (typeof Plotly !== 'undefined' && document.getElementById('stress-chart')) {
+        Plotly.extendTraces('stress-chart', {
+            x: [[t]],
+            y: [[avg]]
+        }, [0]);
+
+        const windowSize = 30;
+        const minX = Math.max(0, t - windowSize);
+        const maxX = t;
+        Plotly.relayout('stress-chart', {
+            'xaxis.range': [minX, maxX]
+        });
+    }
+
+    updateStressLevelDisplay(avg);
+    updateSessionDuration();
+    updateSaveButtonState();
 }
 
 // CSV parsing functions (matching SSEServer.py logic)
@@ -1092,6 +1235,10 @@ function initializeCSVUpload() {
 
 // Process CSV data and update stress chart with simulated-live streaming
 function processCSVData(rows) {
+    // Switch from live WebSocket to CSV playback
+    liveStreamingEnabled = false;
+    stopLiveStreaming();
+
     // Reset session data
     resetStressSession();
     
