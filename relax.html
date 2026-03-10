@@ -5,33 +5,36 @@
     </audio>
 
     <!-- Music Control Panel -->
-    <div class="music-control-panel">
-        <button class="music-control-btn" id="musicToggle" onclick="toggleMusic()">
+    <div class="music-control-panel" id="musicControlPanel">
+        <button class="music-icon-btn" id="musicIconBtn" onclick="toggleMusicPanel()">
             <span id="musicIcon">🔇</span>
-            <span id="musicText">Play Music</span>
         </button>
-        <div class="volume-control">
-            <span class="volume-icon">🔊</span>
-            <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+        <div class="music-controls-expanded" id="musicControlsExpanded">
+            <button class="music-toggle-btn" id="musicToggle" onclick="toggleMusic()">
+                <span id="musicText">Play Music</span>
+            </button>
+            <div class="volume-control">
+                <span class="volume-icon">🔊</span>
+                <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+            </div>
         </div>
     </div>
 
     <!-- Main View -->
     <div id="main-view">
         <div class="welcome-section">
-            <h2>🌿 Welcome to Your Relaxation Space</h2>
+            <h2>Welcome to Your Relaxation Space</h2>
             <p>Take a moment to breathe, relax, and restore your inner peace. Choose from our guided exercises below to help you unwind and reduce stress.</p>
         </div>
 
         <div class="quick-actions">
             <button class="quick-action-btn" onclick="showBreathingExercise()">
-                🧘 Start Breathing Exercise
+                Start Breathing Exercise
             </button>
         </div>
 
     <div class="exercises-grid">
         <div class="exercise-card">
-            <div class="exercise-icon">🌬️</div>
             <div class="exercise-title">Box Breathing</div>
             <div class="exercise-description">
                 A simple yet powerful technique used by Navy SEALs. Inhale, hold, exhale, and hold for equal counts to calm your nervous system.
@@ -41,7 +44,6 @@
         </div>
 
         <div class="exercise-card">
-            <div class="exercise-icon">😌</div>
             <div class="exercise-title">4-7-8 Breathing</div>
             <div class="exercise-description">
                 Perfect for falling asleep or deep relaxation. This technique helps reduce anxiety and promotes calmness.
@@ -51,7 +53,6 @@
         </div>
 
         <div class="exercise-card">
-            <div class="exercise-icon">🌊</div>
             <div class="exercise-title">Deep Breathing</div>
             <div class="exercise-description">
                 Take slow, deep breaths to increase oxygen flow and decrease stress. Great for daily practice.
@@ -61,7 +62,6 @@
         </div>
 
         <div class="exercise-card">
-            <div class="exercise-icon">🐟</div>
             <div class="exercise-title">Koi Fish Pond</div>
             <div class="exercise-description">
                 Watch beautiful koi fish swim peacefully in a tranquil pond. Interact with the fish and enjoy the calming water ripples.
@@ -73,57 +73,48 @@
 
     <div class="stats-section">
         <div class="stat-card">
-            <div class="stat-icon">🎯</div>
             <div class="stat-value" id="totalSessions">0</div>
             <div class="stat-label">Total Sessions</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">⏱️</div>
             <div class="stat-value" id="totalMinutes">0</div>
             <div class="stat-label">Minutes Relaxed</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">🔥</div>
             <div class="stat-value" id="streakDays">0</div>
             <div class="stat-label">Day Streak</div>
         </div>
     </div>
 
     <div class="tips-section">
-        <h3>💡 Relaxation Tips</h3>
+        <h3>Relaxation Tips</h3>
         <div class="tips-list">
             <div class="tip-item">
-                <div class="tip-icon">🪷</div>
                 <div class="tip-text">
                     <strong>Find a quiet space</strong> - Choose a calm environment where you won't be disturbed.
                 </div>
             </div>
             <div class="tip-item">
-                <div class="tip-icon">🎧</div>
                 <div class="tip-text">
                     <strong>Use headphones</strong> - Ambient sounds or calming music can enhance your experience.
                 </div>
             </div>
             <div class="tip-item">
-                <div class="tip-icon">🧘</div>
                 <div class="tip-text">
                     <strong>Comfortable position</strong> - Sit or lie down in a position that feels natural and relaxed.
                 </div>
             </div>
             <div class="tip-item">
-                <div class="tip-icon">⏰</div>
                 <div class="tip-text">
                     <strong>Practice daily</strong> - Even 5 minutes a day can make a significant difference.
                 </div>
             </div>
             <div class="tip-item">
-                <div class="tip-icon">👁️</div>
                 <div class="tip-text">
                     <strong>Close your eyes</strong> - This helps you focus inward and reduce distractions.
                 </div>
             </div>
             <div class="tip-item">
-                <div class="tip-icon">🌅</div>
                 <div class="tip-text">
                     <strong>Best times</strong> - Morning or before bed are ideal for breathing exercises.
                 </div>
@@ -139,7 +130,7 @@
                 ← Back to Relax
             </button>
             
-            <h1 class="breathing-title">🧘 Breathing Exercise</h1>
+            <h1 class="breathing-title">Breathing Exercise</h1>
             <p class="breathing-subtitle">Find your calm and focus</p>
 
             <div class="pattern-selector">
@@ -191,15 +182,15 @@
                 ← Back to Relax
             </button>
             
-            <h1 class="koi-title">🐟 Koi Fish Pond</h1>
+            <h1 class="koi-title">Koi Fish Pond</h1>
             <p class="koi-subtitle">Watch the peaceful koi swim. Tap the water to interact!</p>
 
             <div class="pond-wrapper">
                 <canvas id="koiCanvas"></canvas>
                 <div class="pond-controls">
-                    <button class="pond-btn" onclick="addKoi()">Add Koi 🐟</button>
-                    <button class="pond-btn" onclick="feedFish()">Feed Fish 🌾</button>
-                    <button class="pond-btn" onclick="clearRipples()">Clear Water 💧</button>
+                    <button class="pond-btn" onclick="addKoi()">Add Koi</button>
+                    <button class="pond-btn" onclick="feedFish()">Feed Fish</button>
+                    <button class="pond-btn" onclick="clearRipples()">Clear Water</button>
                 </div>
             </div>
 
@@ -219,7 +210,7 @@
             </div>
 
             <div class="pond-tips">
-                <h3>💡 How to Enjoy</h3>
+                <h3>How to Enjoy</h3>
                 <ul>
                     <li>Click or tap anywhere in the pond to create ripples</li>
                     <li>Watch the koi swim peacefully in their natural patterns</li>
@@ -254,19 +245,62 @@
 /* Music Control Panel */
 .music-control-panel {
     position: fixed;
-    bottom: 85px; /* Above footer */
-    left: 50%;
-    transform: translateX(-50%);
+    top: 140px;
+    right: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     gap: 10px;
-    z-index: 100;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.music-icon-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     background: rgba(255, 255, 255, 0.95);
-    padding: 15px 20px;
-    border-radius: 20px;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(147, 112, 219, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.music-icon-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(147, 112, 219, 0.4);
+}
+
+.music-controls-expanded {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px;
+    border-radius: 15px;
     box-shadow: 0 6px 25px rgba(147, 112, 219, 0.3);
     backdrop-filter: blur(10px);
+    animation: slideDown 0.3s ease;
+}
+
+.music-control-panel.expanded .music-controls-expanded {
+    display: flex;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .music-control-btn {
@@ -299,7 +333,8 @@
 }
 
 #musicIcon {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    line-height: 1;
 }
 
 #musicText {
@@ -322,7 +357,7 @@
 }
 
 #volumeSlider {
-    width: 120px;
+    width: 100px;
     height: 6px;
     border-radius: 5px;
     background: rgba(147, 112, 219, 0.2);
@@ -1157,25 +1192,23 @@
     }
 
     .music-control-panel {
-        bottom: 75px;
-        padding: 12px 15px;
+        top: 120px;
+        right: 15px;
     }
 
-    .music-control-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
+    .music-icon-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
     }
 
-    #musicIcon {
-        font-size: 1.1rem;
-    }
-
-    #musicText {
+    .music-toggle-btn {
+        padding: 8px 16px;
         font-size: 0.85rem;
     }
 
     #volumeSlider {
-        width: 100px;
+        width: 80px;
     }
 }
 
@@ -1185,20 +1218,18 @@
     }
 
     .music-control-panel {
-        bottom: 15px; /* On mobile, footer is hidden, so position lower */
-        padding: 12px 15px;
+        top: 100px;
+        right: 10px;
     }
 
-    .music-control-btn {
-        padding: 10px 18px;
-        font-size: 0.85rem;
+    .music-icon-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
     }
 
-    #musicIcon {
-        font-size: 1rem;
-    }
-
-    #musicText {
+    .music-toggle-btn {
+        padding: 8px 14px;
         font-size: 0.8rem;
     }
 
@@ -1207,7 +1238,7 @@
     }
 
     #volumeSlider {
-        width: 90px;
+        width: 70px;
     }
 }
 </style>
@@ -1417,14 +1448,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== MUSIC CONTROL =====
 let musicPlaying = false;
+let musicPanelExpanded = false;
 const relaxMusic = document.getElementById('relaxMusic');
 const musicToggle = document.getElementById('musicToggle');
 const musicIcon = document.getElementById('musicIcon');
 const musicText = document.getElementById('musicText');
 const volumeSlider = document.getElementById('volumeSlider');
+const musicControlPanel = document.getElementById('musicControlPanel');
 
 // Set initial volume
 relaxMusic.volume = 0.5;
+
+// Close music panel when clicking outside
+document.addEventListener('click', (e) => {
+    const panel = document.getElementById('musicControlPanel');
+    if (musicPanelExpanded && !panel.contains(e.target)) {
+        toggleMusicPanel();
+    }
+});
+
+function toggleMusicPanel() {
+    musicPanelExpanded = !musicPanelExpanded;
+    if (musicPanelExpanded) {
+        musicControlPanel.classList.add('expanded');
+    } else {
+        musicControlPanel.classList.remove('expanded');
+    }
+}
 
 function toggleMusic() {
     if (musicPlaying) {
